@@ -1,20 +1,17 @@
-/* Customer menu, waiter cart and the tiny client-side router. */
+/* Digital café menu: browse, search and read a dish. No cart, no checkout. */
 (() => {
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
   const esc = value => String(value ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
   const money = value => new Intl.NumberFormat('fa-IR').format(Math.round(Number(value) || 0));
   const num = value => new Intl.NumberFormat('fa-IR').format(Number(value) || 0);
-  const timeLabel = value => new Intl.DateTimeFormat('fa-IR', { hour: '2-digit', minute: '2-digit' }).format(new Date(value));
-  const CART_KEY = 'rost-cart-v1';
-  const state = { data: null, category: 'all', query: '', cart: {}, table: '', guest: '', note: '', detail: null, detailQty: 1, lastOrder: null, admin: false };
+  const state = { data: null, category: 'all', query: '', detail: null, admin: false };
   const storefront = $('#storefront');
   const adminView = $('#admin-view');
   const menuGrid = $('#menu-grid');
   const menuStatus = $('#menu-status');
   const emptyState = $('#empty-state');
   const searchInput = $('#menu-search');
-  const cartBar = $('#cart-bar');
   const scrim = $('#scrim');
 
   /* ---------------- UI helpers ---------------- */
@@ -64,27 +61,7 @@
     toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
   }
 
-  window.CafeUI = { openSheet, closeSheet, toast, money, num, timeLabel, esc };
-
-  /* ---------------- cart persistence ---------------- */
-  function readCart() {
-    try {
-      const raw = localStorage.getItem(CART_KEY);
-      const parsed = raw ? JSON.parse(raw) : {};
-      const cart = {};
-      if (parsed && typeof parsed === 'object') {
-        Object.keys(parsed).forEach(id => {
-          const qty = Number(parsed[id]);
-          if (typeof id === 'string' && Number.isSafeInteger(qty) && qty > 0) cart[id] = Math.min(qty, 20);
-        });
-      }
-      return cart;
-    } catch { return {}; }
-  }
-  function saveCart() {
-    try { localStorage.setItem(CART_KEY, JSON.stringify(state.cart)); } catch { /* private mode */ }
-  }
-  state.cart = readCart();
+  window.CafeUI = { openSheet, closeSheet, toast, money, num, esc };
 
   /* ---------------- menu rendering ---------------- */
   function applySettings() {
@@ -93,20 +70,11 @@
       const key = el.dataset.setting;
       if (settings[key] !== undefined) el.textContent = settings[key];
     });
-    document.title = `${settings.name} | منوی کافه`;
-    updateTableChip();
+    if (!state.admin) document.title = `${settings.name} | منوی کافه`;
     const notice = $('#notice-banner');
     notice.hidden = !settings.notice.trim();
     notice.textContent = settings.notice;
     renderFooter();
-    renderCart();
-  }
-
-  function updateTableChip() {
-    const chip = $('#head-table');
-    if (!chip) return;
-    chip.hidden = !state.table;
-    if (state.table) $('#head-table-text').textContent = `میز ${state.table}`;
   }
 
   function renderFooter() {
@@ -114,47 +82,40 @@
     const links = [];
     const phone = String(settings.phone || '').trim();
     if (phone) {
-      const dial = phone.replace(/[^\d+]/g, '');
+      const latinPhone = phone.replace(/[۰-۹]/g, digit => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(digit)));
+      const dial = latinPhone.replace(/[^\d+]/g, '');
       if (dial) links.push(`<a href="tel:${esc(dial)}">تماس با کافه</a>`);
     }
     const instagram = String(settings.instagram || '').trim().replace(/^@/, '');
     if (/^[A-Za-z0-9._]{1,30}$/.test(instagram)) {
       links.push(`<a href="https://instagram.com/${esc(instagram)}" target="_blank" rel="noopener noreferrer">اینستاگرام</a>`);
     }
-    const whatsapp = whatsappNumber();
-    if (whatsapp) links.push(`<a href="https://wa.me/${whatsapp}" target="_blank" rel="noopener noreferrer">واتساپ کافه</a>`);
     $('#foot-links').innerHTML = links.join('');
   }
 
   function renderCategories() {
     const root = $('#category-list');
-    const categories = [{ id: 'all', name: 'همهٔ منو', icon: '✦' }, ...state.data.categories];
-    root.innerHTML = categories.map(category => `<button type="button" class="cat-chip" data-category="${esc(category.id)}" aria-pressed="${state.category === category.id}"><span aria-hidden="true">${esc(category.icon || '✦')}</span>${esc(category.name)}</button>`).join('');
+    const categories = [{ id: 'all', name: 'همه', icon: '' }, ...state.data.categories];
+    root.innerHTML = categories.map(category => `<button type="button" class="cat-chip" data-category="${esc(category.id)}" aria-pressed="${state.category === category.id}">${esc(category.name)}</button>`).join('');
   }
 
-  function itemCard(item) {
-    const closed = !state.data.settings.ordersOpen;
-    const action = !item.available
-      ? '<span class="sold-note">ناموجود</span>'
-      : closed
-        ? '<span class="sold-note">سفارش بسته است</span>'
-        : `<button class="add-btn" type="button" data-add="${esc(item.id)}" aria-label="افزودن ${esc(item.name)} به سفارش">+</button>`;
-    return `<article class="item-card${item.available ? '' : ' is-out'}">
-      <button class="item-main" type="button" data-open="${esc(item.id)}" aria-label="${esc(item.name)}، ${money(item.price)} تومان — دیدن جزئیات و ترکیبات">
-        <span class="item-thumb">
-          <img src="${esc(item.image)}" alt="${esc(item.name)}" width="320" height="240" loading="lazy">
-          ${item.popular && item.available ? '<span class="badge">محبوب</span>' : ''}
-          ${item.available ? '' : '<span class="badge badge-out">ناموجود</span>'}
+  function itemRow(item) {
+    const category = state.data.categories.find(entry => entry.id === item.category);
+    return `<article class="menu-item${item.available ? '' : ' is-out'}" data-item="${esc(item.id)}">
+      <button class="menu-item-main" type="button" data-open="${esc(item.id)}" aria-label="${esc(item.name)}، ${money(item.price)} تومان — دیدن جزئیات و ترکیبات">
+        <span class="menu-thumb">
+          <img src="${esc(item.image)}" alt="${esc(item.name)}" width="160" height="160" loading="lazy">
         </span>
-        <span class="item-body">
-          <span class="item-name">${esc(item.name)}</span>
-          <span class="item-desc">${esc(item.description)}</span>
+        <span class="menu-text">
+          <span class="menu-title">
+            ${esc(item.name)}
+            ${item.popular && item.available ? '<span class="badge-pop">محبوب</span>' : ''}
+            ${item.available ? '' : '<span class="badge-out">ناموجود</span>'}
+          </span>
+          <span class="menu-desc">${esc(item.description) || esc(category?.name || '')}</span>
         </span>
+        <span class="menu-price">${money(item.price)}<small>تومان</small></span>
       </button>
-      <div class="item-foot">
-        <span class="price">${money(item.price)} <small>تومان</small></span>
-        <div class="item-action">${action}</div>
-      </div>
     </article>`;
   }
 
@@ -170,12 +131,11 @@
       .filter(group => group.items.length);
 
     menuGrid.innerHTML = groups.map(group => `<section class="menu-group" aria-label="${esc(group.category.name)}">
-      <div class="group-head">
-        <h3><span aria-hidden="true">${esc(group.category.icon || '✦')}</span>${esc(group.category.name)}</h3>
-        <span class="group-line" aria-hidden="true"></span>
+      <header class="group-head">
+        <h3><span class="group-icon" aria-hidden="true">${esc(group.category.icon || '✦')}</span>${esc(group.category.name)}</h3>
         <span class="group-count">${num(group.items.length)}</span>
-      </div>
-      <div class="group-items">${group.items.map(itemCard).join('')}</div>
+      </header>
+      <div class="group-list">${group.items.map(itemRow).join('')}</div>
     </section>`).join('');
 
     $('#menu-loading').hidden = true;
@@ -190,7 +150,6 @@
     const item = state.data.items.find(entry => entry.id === id);
     if (!item) return;
     state.detail = item;
-    state.detailQty = 1;
     renderItemSheet();
     openSheet('item-sheet');
   }
@@ -198,227 +157,36 @@
   function renderItemSheet() {
     const item = state.detail;
     if (!item) return;
-    const body = $('#item-sheet-body');
-    const closed = !state.data.settings.ordersOpen;
-    const canAdd = item.available && !closed;
-    const lineTotal = item.price * state.detailQty;
+    const category = state.data.categories.find(entry => entry.id === item.category);
     const ingredients = Array.isArray(item.ingredients) ? item.ingredients.filter(part => typeof part === 'string' && part.trim()) : [];
     $('#item-sheet-title').textContent = item.name;
-    body.innerHTML = `<div class="item-hero">
+    $('#item-sheet-body').innerHTML = `<div class="detail-photo">
         <img src="${esc(item.image)}" alt="${esc(item.name)}">
-        ${item.popular && item.available ? '<span class="badge">محبوب کافه</span>' : ''}
-        ${item.available ? '' : '<span class="badge badge-out">ناموجود</span>'}
+        ${item.popular && item.available ? '<span class="detail-badge">محبوب کافه</span>' : ''}
+        ${item.available ? '' : '<span class="detail-badge detail-badge-out">ناموجود</span>'}
       </div>
-      <p class="item-info-desc">${esc(item.description) || 'بدون توضیح.'}</p>
+      <div class="detail-head">
+        <div>
+          <p class="detail-kicker">${esc(category?.name || '')}</p>
+          <h3>${esc(item.name)}</h3>
+        </div>
+        <p class="detail-price">${money(item.price)}<small>تومان</small></p>
+      </div>
+      <p class="detail-desc">${esc(item.description) || 'توضیحی برای این آیتم ثبت نشده است.'}</p>
       ${ingredients.length ? `<section class="ingredient-block" aria-labelledby="ingredients-title">
-        <h3 id="ingredients-title">ترکیبات</h3>
+        <h4 id="ingredients-title">ترکیبات</h4>
         <ul class="ingredient-chips">${ingredients.map(part => `<li>${esc(part)}</li>`).join('')}</ul>
       </section>` : ''}
-      <div class="qty-row">
-        <span class="qty-price">${money(item.price)} <small>تومان</small></span>
-        <div class="qty">
-          <button type="button" data-detail-dec aria-label="کم کردن تعداد"${state.detailQty <= 1 ? ' disabled' : ''}>−</button>
-          <output aria-live="polite">${num(state.detailQty)}</output>
-          <button type="button" data-detail-inc aria-label="زیاد کردن تعداد"${state.detailQty >= 20 ? ' disabled' : ''}>+</button>
-        </div>
-      </div>
-      <div class="sheet-actions">
-        ${canAdd
-          ? `<button class="btn btn-dark btn-wide" type="button" data-detail-add>افزودن به سفارش · ${money(lineTotal)} تومان</button>`
-          : `<button class="btn btn-wide" type="button" disabled>${item.available ? 'سفارش از منو بسته است' : 'این آیتم فعلاً ناموجود است'}</button>`}
-      </div>`;
-  }
-
-  /* ---------------- cart ---------------- */
-  function cartLines() {
-    if (!state.data) return [];
-    return Object.keys(state.cart).map(id => {
-      const item = state.data.items.find(entry => entry.id === id);
-      const qty = state.cart[id];
-      return item ? { item, qty } : null;
-    }).filter(Boolean);
-  }
-
-  function cartTotals() {
-    const lines = cartLines();
-    return { lines, count: lines.reduce((sum, line) => sum + line.qty, 0), total: lines.reduce((sum, line) => sum + line.item.price * line.qty, 0) };
-  }
-
-  function renderCart() {
-    if (!state.data) return;
-    const { lines, count, total } = cartTotals();
-    const badge = $('#cart-count');
-    badge.hidden = count === 0;
-    badge.textContent = num(count);
-    $('#cart-bar-count').textContent = num(count);
-    $('#cart-bar-total').textContent = `${money(total)} تومان`;
-    cartBar.hidden = count === 0 || state.admin;
-    $('#cart-total').textContent = `${money(total)} تومان`;
-
-    const body = $('#cart-body');
-    body.innerHTML = lines.map(({ item, qty }) => `<div class="cart-line">
-        <img src="${esc(item.image)}" alt="" width="54" height="54" loading="lazy">
-        <div>
-          <div class="cart-line-name">${esc(item.name)}</div>
-          <div class="cart-line-meta">${money(item.price)} تومان${item.available ? '' : ' · ناموجود شد'}</div>
-        </div>
-        <div class="cart-line-side">
-          <span class="cart-line-total">${money(item.price * qty)}</span>
-          <div class="qty">
-            <button type="button" data-cart-dec="${esc(item.id)}" aria-label="کم کردن ${esc(item.name)}">−</button>
-            <output>${num(qty)}</output>
-            <button type="button" data-cart-inc="${esc(item.id)}" aria-label="زیاد کردن ${esc(item.name)}">+</button>
-          </div>
-        </div>
-      </div>`).join('');
-
-    const isEmpty = lines.length === 0;
-    $('#cart-empty').hidden = !isEmpty;
-    $('#order-form').hidden = isEmpty;
-    $('#open-my-orders').hidden = OrderStore.myIds().length === 0;
-    const closed = !state.data.settings.ordersOpen;
-    $('#closed-banner').hidden = !closed;
-    const blocked = lines.some(line => !line.item.available);
-    $('#submit-order').disabled = closed || blocked;
-  }
-
-  function addToCart(id, qty = 1) {
-    if (!state.data?.settings.ordersOpen) { toast('سفارش از منو فعلاً بسته است.'); return; }
-    const item = state.data.items.find(entry => entry.id === id);
-    if (!item || !item.available) { toast('این آیتم فعلاً ناموجود است.'); return; }
-    state.cart[id] = Math.min((state.cart[id] || 0) + qty, 20);
-    saveCart();
-    renderCart();
-    toast(`${item.name} به سفارش اضافه شد`);
-  }
-
-  function changeCart(id, delta) {
-    if (!state.cart[id]) return;
-    state.cart[id] += delta;
-    if (state.cart[id] <= 0) delete state.cart[id];
-    saveCart();
-    renderCart();
-  }
-
-  function openCart() {
-    if (!state.data) return;
-    renderCart();
-    $('#table-input').value = state.table;
-    $('#name-input').value = state.guest;
-    $('#note-input').value = state.note;
-    openSheet('cart-sheet');
-  }
-
-  function submitOrder() {
-    if (!state.data) return;
-    const { lines, total } = cartTotals();
-    if (!lines.length) { toast('سبد سفارش خالی است.'); return; }
-    if (!state.data.settings.ordersOpen) { toast('سفارش از منو بسته است.'); return; }
-    if (lines.some(line => !line.item.available)) { toast('یکی از آیتم‌ها ناموجود شده؛ آن را از سبد بردار.'); return; }
-    const table = $('#table-input').value.trim().slice(0, 10);
-    if (!table) { toast('شمارهٔ میز رو وارد کن.'); $('#table-input').focus(); return; }
-    state.table = table;
-    state.guest = $('#name-input').value.trim().slice(0, 24);
-    state.note = $('#note-input').value.trim().slice(0, 200);
-    const note = [state.guest ? `نام: ${state.guest}` : '', state.note].filter(Boolean).join(' — ').slice(0, 200);
-    try {
-      const order = OrderStore.add({
-        code: OrderStore.makeCode(),
-        table,
-        note,
-        items: lines.map(line => ({ id: line.item.id, name: line.item.name, price: line.item.price, qty: line.qty }))
-      });
-      if (order.total !== total) throw new Error('جمع سفارش با منو هم‌خوان نیست.');
-      OrderStore.rememberMine(order.id);
-      state.cart = {};
-      state.lastOrder = order;
-      saveCart();
-      renderCart();
-      closeSheet(true, false);
-      showSuccess(order);
-    } catch (error) {
-      toast(error.message || 'ثبت سفارش انجام نشد.');
-    }
-  }
-
-  function statusPill(status) {
-    const labels = OrderStore.STATUS_LABELS;
-    return `<span class="status-pill status-${esc(status)}">${esc(labels[status] || status)}</span>`;
-  }
-
-  function whatsappNumber() {
-    const digits = String(state.data?.settings.whatsapp || '').replace(/\D/g, '');
-    return digits.length >= 8 && digits.length <= 15 ? digits : '';
-  }
-
-  function orderMessage(order) {
-    const lines = [
-      `سفارش ${order.code} — کافه ${state.data.settings.name}`,
-      `میز: ${order.table}`,
-      ...order.items.map(line => `${line.qty} × ${line.name} = ${line.price * line.qty} تومان`),
-      `مجموع: ${order.total} تومان`
-    ];
-    if (order.note) lines.push(`توضیح: ${order.note}`);
-    return lines.join('\n');
-  }
-
-  function showSuccess(order) {
-    $('#success-body').innerHTML = `<div class="success-wrap">
-        <div class="success-check" aria-hidden="true">✓</div>
-        <h2 id="success-title">سفارش ثبت شد</h2>
-        <p>${whatsappNumber() ? 'برای رسیدن سفارش به کافه، آن را در واتساپ بفرست؛ یا همین کد را به ویتر نشان بده.' : 'این کد را به ویتر نشان بده تا سفارشت را آماده کند.'}</p>
-        <div class="order-code">
-          <span>کد سفارش</span>
-          <strong>${esc(order.code)}</strong>
-          <small>میز ${esc(order.table)}${state.guest ? ` · ${esc(state.guest)}` : ''}</small>
-        </div>
-        <div id="success-status">${statusPill(order.status)}</div>
-        <div class="success-list">
-          ${order.items.map(line => `<div><span>${num(line.qty)} × ${esc(line.name)}</span><span>${money(line.price * line.qty)}</span></div>`).join('')}
-        </div>
-        <div class="success-total"><span>مجموع</span><span>${money(order.total)} تومان</span></div>
-        <div class="success-actions">
-          ${whatsappNumber() ? `<a class="btn btn-dark btn-wide" href="https://wa.me/${whatsappNumber()}?text=${encodeURIComponent(orderMessage(order))}" target="_blank" rel="noopener noreferrer">ارسال سفارش در واتساپ</a>` : ''}
-          <button class="btn ${whatsappNumber() ? '' : 'btn-dark'} btn-wide" type="button" data-track-order>پیگیری سفارش</button>
-          <button class="btn btn-wide" type="button" data-close>بستن</button>
-        </div>
-      </div>`;
-    openSheet('success-sheet');
-  }
-
-  function refreshSuccessStatus() {
-    if (!state.lastOrder || $('#success-sheet').hidden) return;
-    const saved = OrderStore.list().find(order => order.id === state.lastOrder.id);
-    if (!saved) return;
-    state.lastOrder = saved;
-    const holder = $('#success-status');
-    if (holder) holder.innerHTML = statusPill(saved.status);
-  }
-
-  function renderMyOrders() {
-    const ids = OrderStore.myIds();
-    const orders = OrderStore.list().filter(order => ids.includes(order.id));
-    const body = $('#my-orders-body');
-    if (!orders.length) {
-      body.innerHTML = '<div class="cart-empty"><span aria-hidden="true">🧾</span><p>هنوز سفارشی ثبت نکردی.</p></div>';
-      return;
-    }
-    body.innerHTML = orders.map(order => `<article class="my-order">
-        <div class="my-order-head">
-          <strong>سفارش ${esc(order.code)}</strong>
-          ${statusPill(order.status)}
-          <time>${timeLabel(order.createdAt)}</time>
-        </div>
-        <p>میز ${esc(order.table)} · ${order.items.map(line => `${num(line.qty)}× ${esc(line.name)}`).join('، ')}</p>
-        <div class="my-order-total"><span>${money(order.total)} تومان</span><span>${esc(OrderStore.STATUS_LABELS[order.status])}</span></div>
-      </article>`).join('');
+      <p class="detail-note">${item.available ? 'برای سفارش، ویتر را صدا بزن.' : 'این آیتم فعلاً در منو موجود نیست.'}</p>
+      <button class="btn btn-outline btn-wide" type="button" data-close>بستن</button>`;
   }
 
   /* ---------------- routes ---------------- */
   function isAdminRoute() {
-    if (new URLSearchParams(location.search).get('admin') === '1') return true;
     const hash = decodeURIComponent(location.hash.replace(/^#\/?/, '')).toLowerCase();
-    return hash === 'admin' || hash === '!admin' || hash === 'panel' || hash.startsWith('admin/') || hash.startsWith('admin?');
+    const adminHash = hash === 'admin' || hash === '!admin' || hash === 'panel' || hash.startsWith('admin/') || hash.startsWith('admin?');
+    if (hash) return adminHash;
+    return new URLSearchParams(location.search).get('admin') === '1';
   }
 
   function route() {
@@ -428,13 +196,11 @@
     adminView.hidden = !admin;
     closeSheet(true, false);
     if (admin) {
-      cartBar.hidden = true;
       window.scrollTo({ top: 0, behavior: 'auto' });
       window.CafeAdmin?.enter();
-      if (state.data) document.title = `پنل مدیریت | ${state.data.settings.name}`;
-    } else {
-      renderCart();
-      if (state.data) document.title = `${state.data.settings.name} | منوی کافه`;
+      document.title = state.data ? `پنل مدیریت | ${state.data.settings.name}` : 'پنل مدیریت';
+    } else if (state.data) {
+      document.title = `${state.data.settings.name} | منوی کافه`;
     }
   }
 
@@ -449,8 +215,6 @@
     });
 
     menuGrid.addEventListener('click', event => {
-      const add = event.target.closest('[data-add]');
-      if (add) { addToCart(add.dataset.add); return; }
       const open = event.target.closest('[data-open]');
       if (open) openItem(open.dataset.open);
     });
@@ -469,35 +233,6 @@
       renderCategories();
       renderMenu();
     });
-
-    $('#cart-trigger').addEventListener('click', openCart);
-    $('#cart-bar-btn').addEventListener('click', openCart);
-
-    $('#cart-body').addEventListener('click', event => {
-      const inc = event.target.closest('[data-cart-inc]');
-      if (inc) { changeCart(inc.dataset.cartInc, 1); return; }
-      const dec = event.target.closest('[data-cart-dec]');
-      if (dec) changeCart(dec.dataset.cartDec, -1);
-    });
-
-    $('#order-form').addEventListener('submit', event => { event.preventDefault(); submitOrder(); });
-    $('#table-input').addEventListener('input', event => { state.table = event.target.value.trim().slice(0, 10); updateTableChip(); });
-    $('#name-input').addEventListener('input', event => { state.guest = event.target.value.trim().slice(0, 24); });
-    $('#note-input').addEventListener('input', event => { state.note = event.target.value.trim().slice(0, 200); });
-
-    $('#item-sheet-body').addEventListener('click', event => {
-      if (event.target.closest('[data-detail-inc]')) { state.detailQty = Math.min(20, state.detailQty + 1); renderItemSheet(); }
-      else if (event.target.closest('[data-detail-dec]')) { state.detailQty = Math.max(1, state.detailQty - 1); renderItemSheet(); }
-      else if (event.target.closest('[data-detail-add]')) { addToCart(state.detail.id, state.detailQty); closeSheet(); }
-    });
-
-    $('#success-body').addEventListener('click', event => {
-      if (!event.target.closest('[data-track-order]')) return;
-      renderMyOrders();
-      closeSheet(true, false);
-      openSheet('my-orders-sheet');
-    });
-    $('#open-my-orders').addEventListener('click', () => { renderMyOrders(); closeSheet(true, false); openSheet('my-orders-sheet'); });
 
     document.addEventListener('click', event => {
       if (event.target.closest('[data-close]')) closeSheet();
@@ -521,14 +256,8 @@
 
     window.addEventListener('hashchange', route);
     window.addEventListener('rost:menu-changed', refreshMenu);
-    window.addEventListener('rost:orders-changed', () => {
-      refreshSuccessStatus();
-      if (!$('#my-orders-sheet').hidden) renderMyOrders();
-      renderCart();
-    });
     window.addEventListener('storage', event => {
       if (event.key === MenuStore.MENU_KEY) refreshMenu();
-      if (event.key === MenuStore.ORDERS_KEY) { refreshSuccessStatus(); renderCart(); }
     });
   }
 
@@ -537,20 +266,17 @@
       const result = await MenuStore.load();
       state.data = result.data;
       if (state.category !== 'all' && !state.data.categories.some(category => category.id === state.category)) state.category = 'all';
-      Object.keys(state.cart).forEach(id => {
-        if (!state.data.items.some(item => item.id === id)) delete state.cart[id];
-      });
-      saveCart();
       applySettings();
       renderCategories();
       renderMenu();
-      renderCart();
+      if (state.detail) {
+        const fresh = state.data.items.find(item => item.id === state.detail.id);
+        if (fresh) { state.detail = fresh; renderItemSheet(); }
+      }
     } catch (error) { console.error(error); }
   }
 
   async function init() {
-    const table = new URLSearchParams(location.search).get('table');
-    if (table) state.table = table.trim().slice(0, 10);
     bindEvents();
     try {
       const result = await MenuStore.load();
@@ -558,7 +284,6 @@
       applySettings();
       renderCategories();
       renderMenu();
-      renderCart();
       if (result.fallback && location.protocol !== 'file:') {
         const notice = $('#notice-banner');
         if (!state.data.settings.notice) {

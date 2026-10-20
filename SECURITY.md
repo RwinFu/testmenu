@@ -2,7 +2,7 @@
 
 ## What this project is
 
-A static QR menu for GitHub Pages. The customer page, the table cart and the owner panel all run in the browser; there is no backend, database or account system.
+A static digital menu for GitHub Pages. The customer menu and the owner panel both run in the browser; there is no backend, database or account system. Customers can only read the menu; there is no cart or checkout.
 
 ## The admin PIN
 
@@ -12,8 +12,9 @@ The panel at `/admin/` (and `/#admin`) is protected by a local PIN (default `123
 
 ## Data handling
 
-- Menu edits, cart contents, orders and the PIN hash are stored in `localStorage` on the visitor's own device.
-- Orders placed by a customer stay on that customer's device until a shared backend is added. They never reach the cafe automatically.
+- Menu edits and the PIN hash are stored in `localStorage` on the owner's own device.
+- The published menu is the static `menu-data.json` file in the repository; the owner exports edits from the panel and commits that file.
+- Customers never write data; the only stored value on a customer device is nothing at all.
 - No analytics, third-party scripts, cookies or external fonts are loaded.
 - Every render path escapes user-controlled strings; menu data is validated before it is stored or displayed, including an allow-list for image paths and bounded ingredient lists.
 

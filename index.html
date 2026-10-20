@@ -1,12 +1,12 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; connect-src 'self'; font-src 'self'; form-action 'self'; frame-src 'none'; img-src 'self' data:; object-src 'none'; script-src 'self'; style-src 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; connect-src 'self'; font-src 'self'; form-action 'self'; frame-src 'none'; img-src 'self' data: blob:; object-src 'none'; script-src 'self'; style-src 'self'">
   <meta name="referrer" content="no-referrer">
-  <meta name="theme-color" content="#f7f2e8">
-  <meta name="description" content="منوی دیجیتال کافه رُست؛ قهوه، صبحانه و دسر. سفارش از سر میز.">
+  <meta name="theme-color" content="#f6f1e8">
+  <meta name="description" content="منوی دیجیتال کافه رُست؛ قهوه، صبحانه و دسر. منو را ببین و سفارش را به ویتر بگو.">
   <title>کافه رُست | منوی کافه</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -20,48 +20,28 @@
           <span class="brand-mark" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h11v5.2A4.8 4.8 0 0 1 10.2 19H8.8A4.8 4.8 0 0 1 4 14.2V9Z"/><path d="M15 10h1.6a2.4 2.4 0 0 1 0 4.8H15M7 6c0-1 1-1 1-2M11 6c0-1 1-1 1-2"/></svg>
           </span>
-          <span data-setting="name">کافه رُست</span>
+          <span class="brand-name" data-setting="name">کافه رُست</span>
         </a>
-        <div class="head-actions">
-          <span class="table-chip" id="head-table" hidden>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M5 9h14M7 9v10M17 9v10M4 19h16M8 5h8l2 4H6l2-4Z"/></svg>
-            <span id="head-table-text"></span>
-          </span>
-          <button class="cart-trigger" id="cart-trigger" type="button" aria-label="سبد سفارش">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8h12l-1 11H7L6 8Z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg>
-            <span class="cart-count" id="cart-count" hidden>۰</span>
-          </button>
-        </div>
+        <span class="head-hour" data-setting="hours">هر روز، ۸ صبح تا ۱۱ شب</span>
       </div>
     </header>
 
-    <main id="menu-view">
+    <main id="menu-view" aria-label="منوی مشتری">
       <section class="hero shell" aria-labelledby="cafe-name">
-        <div class="hero-card">
-          <img class="hero-img" src="assets/hero-cafe.jpg" alt="فنجان قهوه روی میز چوبی کافه" width="900" height="900">
-          <div class="hero-shade" aria-hidden="true"></div>
-          <div class="hero-copy">
-            <p class="hero-eyebrow"><span class="dot" aria-hidden="true"></span><span data-setting="eyebrow">قهوهٔ تازه، هر روز</span></p>
-            <h1 id="cafe-name" data-setting="name">کافه رُست</h1>
-            <p class="hero-desc" data-setting="description">قهوه، صبحانه و دسر خانگی — سفارشت رو از میز بده.</p>
-          </div>
-          <div class="hero-tags">
-            <span class="glass-chip">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/></svg>
-              <span data-setting="hours">هر روز، ۸ صبح تا ۱۱ شب</span>
-            </span>
-            <span class="glass-chip glass-chip-accent">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 9h14M7 9v10M17 9v10M4 19h16M8 5h8l2 4H6l2-4Z"/></svg>
-              سفارش از سر میز
-            </span>
-          </div>
-        </div>
+        <p class="hero-eyebrow"><span class="hero-dot" aria-hidden="true"></span><span data-setting="eyebrow">قهوهٔ تازه، هر روز</span></p>
+        <h1 id="cafe-name" class="hero-title" data-setting="name">کافه رُست</h1>
+        <p class="hero-desc" data-setting="description">قهوهٔ دست‌ساز، صبحانهٔ گرم و دسر خانگی — منوی کافه.</p>
+        <p class="hero-meta">
+          <span>منوی دیجیتال</span>
+          <span class="hero-sep" aria-hidden="true">·</span>
+          <span>قیمت‌ها به تومان</span>
+        </p>
 
-        <label class="search-field">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>
-          <input type="search" id="menu-search" placeholder="دنبال چی می‌گردی؟" aria-label="جست‌وجو در منو" autocomplete="off">
+        <div class="search-field">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>
+          <input type="search" id="menu-search" placeholder="جست‌وجو در منو…" aria-label="جست‌وجو در منو" autocomplete="off">
           <button class="search-clear" id="search-clear" type="button" aria-label="پاک کردن جست‌وجو" hidden>×</button>
-        </label>
+        </div>
       </section>
 
       <div id="menu-start" class="menu-wrap">
@@ -70,31 +50,30 @@
         </nav>
 
         <div class="shell menu-body">
-          <div id="notice-banner" class="banner" hidden></div>
+          <div id="notice-banner" class="notice" hidden></div>
+
           <div class="menu-heading">
-            <div>
-              <h2>منوی کافه</h2>
-              <p class="menu-hint">روی هر غذا بزن تا ترکیبات و جزئیاتش را ببینی.</p>
-            </div>
+            <h2>منو</h2>
             <span class="menu-count" id="menu-count"></span>
           </div>
           <p class="sr-only" id="menu-status" aria-live="polite">در حال آماده کردن منو…</p>
-          <div class="menu-grid" id="menu-grid"></div>
+
+          <div class="menu-list" id="menu-grid"></div>
 
           <div class="empty-state" id="empty-state" hidden>
             <span class="empty-emoji" aria-hidden="true">☕</span>
             <h3>چیزی پیدا نشد</h3>
-            <p>یه عبارت دیگه امتحان کن یا کل منو رو ببین.</p>
+            <p>یک عبارت دیگر امتحان کن یا کل منو را ببین.</p>
             <button class="btn btn-outline" id="reset-search" type="button">دیدن همهٔ منو</button>
           </div>
 
-          <div class="menu-loading" id="menu-loading">
-            <span class="skeleton" aria-hidden="true"></span>
-            <span class="skeleton" aria-hidden="true"></span>
-            <span class="skeleton" aria-hidden="true"></span>
-            <span class="skeleton" aria-hidden="true"></span>
+          <div class="menu-loading" id="menu-loading" aria-hidden="true">
+            <span class="skeleton"></span>
+            <span class="skeleton"></span>
+            <span class="skeleton"></span>
           </div>
-          <noscript><p class="banner">برای دیدن منو و سفارش، جاوااسکریپت مرورگر را روشن کن.</p></noscript>
+
+          <noscript><p class="notice">برای دیدن منو، جاوااسکریپت مرورگر را روشن کن.</p></noscript>
         </div>
       </div>
     </main>
@@ -102,27 +81,18 @@
     <footer class="site-foot">
       <div class="shell foot-inner">
         <div class="foot-brand">
-          <span class="brand-mark small" aria-hidden="true">ر</span>
+          <span class="brand-mark small" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h11v5.2A4.8 4.8 0 0 1 10.2 19H8.8A4.8 4.8 0 0 1 4 14.2V9Z"/><path d="M15 10h1.6a2.4 2.4 0 0 1 0 4.8H15"/></svg>
+          </span>
           <div>
             <strong data-setting="name">کافه رُست</strong>
             <p data-setting="hours">هر روز، ۸ صبح تا ۱۱ شب</p>
           </div>
         </div>
         <div class="foot-links" id="foot-links"></div>
-        <a class="foot-admin" href="#admin">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
-          ورود مدیر
-        </a>
+        <p class="foot-note">منوی دیجیتال · قیمت‌ها به تومان</p>
       </div>
     </footer>
-  </div>
-
-  <div class="cart-bar" id="cart-bar" hidden>
-    <button class="cart-bar-btn" id="cart-bar-btn" type="button">
-      <span class="cart-bar-count" id="cart-bar-count">۰</span>
-      <span class="cart-bar-label">دیدن سفارش</span>
-      <span class="cart-bar-total" id="cart-bar-total">۰ تومان</span>
-    </button>
   </div>
 
   <div class="scrim" id="scrim" hidden></div>
@@ -136,71 +106,17 @@
     <div class="sheet-body" id="item-sheet-body"></div>
   </section>
 
-  <section class="sheet" id="cart-sheet" role="dialog" aria-modal="true" aria-labelledby="cart-sheet-title" hidden>
-    <div class="sheet-grip" aria-hidden="true"></div>
-    <div class="sheet-head">
-      <h2 id="cart-sheet-title">سبد سفارش</h2>
-      <button class="icon-btn" type="button" data-close aria-label="بستن">×</button>
-    </div>
-    <div class="sheet-body">
-      <div id="cart-empty" class="cart-empty" hidden>
-        <span aria-hidden="true">🧺</span>
-        <p>هنوز چیزی انتخاب نکردی.</p>
-        <button class="btn btn-outline" type="button" data-close>برگرد به منو</button>
-      </div>
-      <div id="cart-body"></div>
-      <form class="order-form" id="order-form" novalidate>
-        <div class="field-row">
-          <label class="field">
-            <span>شمارهٔ میز</span>
-            <input id="table-input" name="table" type="text" inputmode="numeric" maxlength="10" placeholder="مثلاً ۵" autocomplete="off">
-          </label>
-          <label class="field">
-            <span>نام (اختیاری)</span>
-            <input id="name-input" name="name" type="text" maxlength="24" placeholder="برای صدا زدن" autocomplete="off">
-          </label>
-        </div>
-        <label class="field">
-          <span>توضیح برای ویتر (اختیاری)</span>
-          <textarea id="note-input" name="note" rows="2" maxlength="200" placeholder="مثلاً بدون شکر، با شیر بادام…"></textarea>
-        </label>
-        <div class="cart-summary">
-          <span>مجموع سفارش</span>
-          <strong id="cart-total">۰ تومان</strong>
-        </div>
-        <p class="banner banner-warn" id="closed-banner" hidden>سفارش از منو فعلاً بسته است؛ برای سفارش از ویتر کمک بگیر.</p>
-        <button class="btn btn-dark btn-wide" id="submit-order" type="submit">ثبت سفارش</button>
-        <p class="tiny-note">بعد از ثبت، کد سفارش را به ویتر نشان بده. پرداخت سر میز انجام می‌شود.</p>
-      </form>
-      <button class="link-btn my-orders-link" id="open-my-orders" type="button" hidden>سفارش‌های من</button>
-    </div>
-  </section>
-
-  <section class="sheet" id="success-sheet" role="dialog" aria-modal="true" aria-labelledby="success-title" hidden>
-    <div class="sheet-grip" aria-hidden="true"></div>
-    <div class="sheet-body" id="success-body"></div>
-  </section>
-
-  <section class="sheet" id="my-orders-sheet" role="dialog" aria-modal="true" aria-labelledby="my-orders-title" hidden>
-    <div class="sheet-grip" aria-hidden="true"></div>
-    <div class="sheet-head">
-      <h2 id="my-orders-title">سفارش‌های من</h2>
-      <button class="icon-btn" type="button" data-close aria-label="بستن">×</button>
-    </div>
-    <div class="sheet-body" id="my-orders-body"></div>
-  </section>
-
-  <main id="admin-view" class="admin" hidden>
+  <main id="admin-view" class="admin" aria-label="پنل مدیریت" hidden>
     <section class="login-view" id="admin-login">
       <div class="login-card">
         <span class="brand-mark login-mark" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h11v5.2A4.8 4.8 0 0 1 10.2 19H8.8A4.8 4.8 0 0 1 4 14.2V9Z"/><path d="M15 10h1.6a2.4 2.4 0 0 1 0 4.8H15M7 6c0-1 1-1 1-2M11 6c0-1 1-1 1-2"/></svg>
         </span>
-        <p class="login-kicker">کافه رُست</p>
-        <h1>پنل مدیریت</h1>
-        <p class="login-sub">سفارش‌های میزها و منوی کافه را از اینجا ببین و ویرایش کن.</p>
+        <p class="login-kicker">پنل مدیریت</p>
+        <h1>ورود مدیر</h1>
+        <p class="login-sub">منو، قیمت‌ها و اطلاعات کافه را از این‌جا به‌روز کن.</p>
         <form id="login-form" novalidate>
-          <label class="pin-field" for="admin-pin">
+          <label class="pin-field">
             <span>رمز مدیر</span>
             <input id="admin-pin" type="password" inputmode="numeric" autocomplete="current-password" maxlength="12" placeholder="● ● ● ●" aria-describedby="login-hint" required>
           </label>
@@ -222,8 +138,8 @@
           <button class="btn btn-dark btn-wide login-submit" type="submit">ورود به پنل</button>
         </form>
         <p class="login-hint" id="login-hint">رمز پیش‌فرض: <bdi>1234</bdi> — بعد از ورود از بخش «کافه» عوضش کن.</p>
-        <p class="login-note">این پنل روی همین مرورگر کار می‌کند. GitHub Pages سرور ندارد؛ رمز، فقط جلوی دست‌رسی روزمره را می‌گیرد و امنیت واقعی نیست.</p>
-        <a class="link-btn" href="#menu-start">← برگشت به منو</a>
+        <p class="login-note">این پنل روی همین مرورگر کار می‌کند؛ GitHub Pages سرور ندارد و رمز فقط یک قفل سادهٔ محلی است.</p>
+        <a class="link-btn" href="#menu-start">← بازگشت به منو</a>
       </div>
     </section>
 
@@ -231,29 +147,37 @@
       <header class="admin-head">
         <div class="shell admin-head-row">
           <a class="brand brand-light" href="#menu-start">
-            <span class="brand-mark" aria-hidden="true">ر</span>
+            <span class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h11v5.2A4.8 4.8 0 0 1 10.2 19H8.8A4.8 4.8 0 0 1 4 14.2V9Z"/><path d="M15 10h1.6a2.4 2.4 0 0 1 0 4.8H15M7 6c0-1 1-1 1-2M11 6c0-1 1-1 1-2"/></svg>
+            </span>
             <span id="admin-brand-name">پنل کافه</span>
           </a>
           <div class="admin-head-actions">
-            <a class="ghost-btn" href="./" target="_blank" rel="noopener">منوی مشتری ↗</a>
+            <a class="ghost-btn" href="./" target="_blank" rel="noopener">دیدن منو ↗</a>
             <button class="ghost-btn" type="button" id="admin-logout">خروج</button>
           </div>
         </div>
       </header>
 
       <div class="shell admin-body">
-        <section class="admin-panel" data-panel="orders">
-          <div class="stat-row">
-            <div class="stat-card"><span>سفارش جدید</span><strong id="stat-new">۰</strong></div>
-            <div class="stat-card"><span>سفارش‌های امروز</span><strong id="stat-today">۰</strong></div>
-            <div class="stat-card"><span>فروش امروز</span><strong id="stat-sales">۰</strong><small>تومان</small></div>
+        <div class="admin-title-row">
+          <div>
+            <p class="admin-kicker">پنل مدیریت</p>
+            <h1>منوی کافه</h1>
           </div>
-          <div class="order-filter" id="order-filters" role="group" aria-label="فیلتر سفارش‌ها"></div>
-          <p class="sr-only" aria-live="polite">سفارش‌ها به‌صورت زنده به‌روز می‌شوند.</p>
-          <div id="orders-list"></div>
-        </section>
+          <div class="admin-stats" role="group" aria-label="خلاصهٔ منو">
+            <div><strong id="stat-items">۰</strong><span>آیتم</span></div>
+            <div><strong id="stat-out">۰</strong><span>ناموجود</span></div>
+            <div><strong id="stat-cats">۰</strong><span>دسته</span></div>
+          </div>
+        </div>
 
-        <section class="admin-panel" data-panel="menu" hidden>
+        <nav class="admin-tabs" role="tablist" aria-label="بخش‌های پنل">
+          <button class="admin-tab" role="tab" type="button" data-admin-tab="menu" aria-selected="true">منو و قیمت‌ها</button>
+          <button class="admin-tab" role="tab" type="button" data-admin-tab="settings" aria-selected="false">اطلاعات کافه</button>
+        </nav>
+
+        <section class="admin-panel" data-panel="menu">
           <div class="panel-toolbar">
             <label class="search-field admin-search">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>
@@ -261,7 +185,7 @@
             </label>
             <button class="btn btn-dark" type="button" id="add-item">＋ آیتم جدید</button>
           </div>
-          <p class="panel-note">کلید کنار هر آیتم موجودی را عوض می‌کند؛ تغییر همان لحظه در منوی مشتری می‌آید.</p>
+          <p class="panel-hint">برای ویرایش روی آیتم بزن. کلید کنار هر آیتم، موجودی را همان لحظه در منوی مشتری عوض می‌کند.</p>
           <div id="admin-menu-list" class="admin-list"></div>
         </section>
 
@@ -270,27 +194,23 @@
             <h2>اطلاعات کافه</h2>
             <form id="settings-form" class="stack-form">
               <div class="field-row">
-                <label class="field"><span>نام کافه</span><input id="set-name" maxlength="50" required></label>
-                <label class="field"><span>ساعت کاری</span><input id="set-hours" maxlength="80"></label>
+                <label class="field"><span>نام کافه</span><input id="set-name" type="text" maxlength="50" required></label>
+                <label class="field"><span>ساعت کاری</span><input id="set-hours" type="text" maxlength="80"></label>
               </div>
               <div class="field-row">
-                <label class="field"><span>شعار کوتاه</span><input id="set-eyebrow" maxlength="100"></label>
-                <label class="field"><span>شمارهٔ تماس</span><input id="set-phone" maxlength="30" inputmode="tel"></label>
+                <label class="field"><span>شعار کوتاه</span><input id="set-eyebrow" type="text" maxlength="100"></label>
+                <label class="field"><span>شمارهٔ تماس</span><input id="set-phone" type="tel" maxlength="30" inputmode="tel"></label>
               </div>
-              <label class="field"><span>واتساپ کافه (برای ارسال سفارش)</span><input id="set-whatsapp" maxlength="30" inputmode="tel" placeholder="مثلاً 989121234567"><small class="field-hint">با کد کشور و بدون صفر اول؛ اگر پر شود، مشتری می‌تواند سفارش را مستقیم در واتساپ بفرستد.</small></label>
-              <label class="field"><span>توضیح کافه</span><textarea id="set-description" rows="2" maxlength="200"></textarea></label>
+              <label class="field"><span>اینستاگرام</span><input id="set-instagram" type="text" maxlength="60" placeholder="بدون @"><small class="field-hint">اگر پر شود، لینکش پایین منو نمایش داده می‌شود.</small></label>
+              <label class="field"><span>توضیح کوتاه کافه</span><textarea id="set-description" rows="2" maxlength="200"></textarea></label>
               <label class="field"><span>پیام بالای منو (اختیاری)</span><textarea id="set-notice" rows="2" maxlength="200" placeholder="مثلاً: امروز دسر ویژه داریم."></textarea></label>
-              <label class="switch-row">
-                <span>سفارش از میز باز باشد</span>
-                <input type="checkbox" id="set-orders-open" class="switch">
-              </label>
               <div class="stack-actions"><button class="btn btn-dark btn-wide" type="submit">ذخیرهٔ اطلاعات</button></div>
             </form>
           </div>
 
           <div class="panel-block">
             <h2>رمز مدیر</h2>
-            <p class="panel-note">یک رمز ساده ۴ تا ۱۲ رقمی انتخاب کن. اگر فراموش شد، داده‌های همین سایت را از مرورگر پاک کن تا رمز پیش‌فرض <bdi>1234</bdi> برگردد.</p>
+            <p class="panel-hint">یک رمز سادهٔ ۴ تا ۱۲ رقمی انتخاب کن. اگر فراموش شد، داده‌های همین سایت را از مرورگر پاک کن تا رمز پیش‌فرض <bdi>1234</bdi> برگردد.</p>
             <form id="pin-form" class="inline-form">
               <label class="field"><span>رمز فعلی</span><input id="pin-current" type="password" autocomplete="current-password" required></label>
               <label class="field"><span>رمز جدید</span><input id="pin-new" type="password" autocomplete="new-password" inputmode="numeric" minlength="4" maxlength="12" required></label>
@@ -298,44 +218,38 @@
             </form>
           </div>
 
-          <details class="panel-block panel-fold">
-            <summary><span>دسته‌بندی‌ها</span><small>افزودن و حذف دسته</small></summary>
-            <div id="admin-categories" class="admin-list"></div>
+          <div class="panel-block">
+            <h2>دسته‌بندی‌ها</h2>
+            <div id="admin-categories" class="category-list"></div>
             <form id="category-form" class="inline-form">
-              <label class="field field-icon"><span>آیکن</span><input id="cat-icon" maxlength="4" placeholder="🍰"></label>
-              <label class="field"><span>دستهٔ جدید</span><input id="cat-name" maxlength="60" placeholder="مثلاً نوشیدنی گرم" required></label>
+              <label class="field field-icon"><span>آیکن</span><input id="cat-icon" type="text" maxlength="4" placeholder="🍰"></label>
+              <label class="field"><span>دستهٔ جدید</span><input id="cat-name" type="text" maxlength="60" placeholder="مثلاً نوشیدنی گرم" required></label>
               <button class="btn" type="submit">افزودن</button>
             </form>
-          </details>
+          </div>
 
-          <details class="panel-block panel-fold">
-            <summary><span>ابزارهای منو</span><small>QR، بازگردانی و پاک‌سازی</small></summary>
+          <div class="panel-block">
+            <h2>انتشار منو</h2>
+            <p class="panel-hint" id="menu-source"></p>
+            <p class="panel-hint">تغییرات اول در همین مرورگر ذخیره می‌شوند. برای این‌که همهٔ مشتری‌ها قیمت‌های تازه را ببینند، فایل منو را دانلود کن و در مخزن GitHub جای <code>menu-data.json</code> بگذار.</p>
             <div class="link-row">
-              <a class="btn btn-outline" href="qr.html">چاپ QR میز</a>
-              <a class="btn btn-outline" href="./" target="_blank" rel="noopener">دیدن منوی مشتری</a>
-              <button class="btn btn-outline" type="button" id="reset-menu">بازگردانی منوی پیش‌فرض</button>
-              <button class="btn btn-outline danger" type="button" id="clear-orders">پاک کردن سفارش‌ها</button>
+              <button class="btn btn-dark" type="button" id="download-menu">دانلود فایل منو</button>
+              <button class="btn btn-outline" type="button" id="import-menu-btn">بارگذاری فایل</button>
+              <input type="file" id="import-menu" accept="application/json,.json" hidden>
+              <button class="btn btn-outline danger" type="button" id="reset-menu">بازگردانی منوی منتشرشده</button>
             </div>
-            <p class="panel-note">همه‌چیز در حافظهٔ همین مرورگر ذخیره می‌شود. برای استفادهٔ واقعی روی چند دستگاه، به یک سرور یا سرویس همگام‌سازی نیاز است.</p>
-          </details>
+          </div>
+
+          <div class="panel-block">
+            <h2>راهنما</h2>
+            <ul class="help-list">
+              <li>هر آیتم عکس، قیمت، توضیح کوتاه و ترکیبات دارد؛ ترکیبات را با ویرگول جدا کن.</li>
+              <li>با کلید «موجود» می‌توانی یک آیتم را بدون حذف، موقتاً از منو کنار بگذاری.</li>
+              <li>برای QR میزها، صفحهٔ <a href="qr.html">چاپ QR</a> را باز کن.</li>
+            </ul>
+          </div>
         </section>
       </div>
-
-      <nav class="admin-nav" role="tablist" aria-label="بخش‌های پنل">
-        <button class="admin-nav-btn" role="tab" type="button" data-admin-tab="orders" aria-selected="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10l2 3v13H5V7l2-3Z"/><path d="M9 11h6M9 15h6"/></svg>
-          <span>سفارش‌ها</span>
-          <span class="tab-badge" id="orders-badge" hidden></span>
-        </button>
-        <button class="admin-nav-btn" role="tab" type="button" data-admin-tab="menu" aria-selected="false">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5h14v14H5z"/><path d="M9 9h6M9 13h6M9 17h3"/></svg>
-          <span>منو</span>
-        </button>
-        <button class="admin-nav-btn" role="tab" type="button" data-admin-tab="settings" aria-selected="false">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6 17 7M7 17l-1.4 1.4"/></svg>
-          <span>کافه</span>
-        </button>
-      </nav>
     </section>
   </main>
 
@@ -349,20 +263,20 @@
       <form id="item-form" class="stack-form" novalidate>
         <input type="hidden" id="edit-id">
         <div class="field-row">
-          <label class="field"><span>نام آیتم</span><input id="edit-name" maxlength="60" required></label>
+          <label class="field"><span>نام آیتم</span><input id="edit-name" type="text" maxlength="60" required></label>
           <label class="field"><span>قیمت (تومان)</span><input id="edit-price" type="number" min="0" step="1000" max="10000000000" inputmode="numeric" required></label>
         </div>
         <div class="field-row">
           <label class="field"><span>دسته‌بندی</span><select id="edit-category" required></select></label>
-          <label class="field"><span>چیدمان</span>
-            <span class="check-row">
+          <div class="field"><span>وضعیت</span>
+            <div class="check-row">
               <label class="check"><input type="checkbox" id="edit-popular"> محبوب</label>
               <label class="check"><input type="checkbox" id="edit-available" checked> موجود</label>
-            </span>
-          </label>
+            </div>
+          </div>
         </div>
         <label class="field"><span>توضیح کوتاه</span><textarea id="edit-description" rows="2" maxlength="150"></textarea></label>
-        <label class="field"><span>ترکیبات</span><input id="edit-ingredients" maxlength="240" placeholder="مثلاً شیر، اسپرسو، شکلات تلخ"><small class="field-hint">هر ترکیب را با ویرگول جدا کن؛ همین‌ها در صفحهٔ جزئیات غذا به مشتری نشان داده می‌شود.</small></label>
+        <label class="field"><span>ترکیبات</span><input id="edit-ingredients" type="text" maxlength="240" placeholder="مثلاً شیر، اسپرسو، شکلات تلخ"><small class="field-hint">هر ترکیب را با ویرگول جدا کن؛ همین‌ها در صفحهٔ جزئیات غذا نشان داده می‌شود.</small></label>
         <fieldset class="image-field">
           <legend>تصویر</legend>
           <div class="image-picker" id="image-picker"></div>

@@ -1,7 +1,7 @@
 {
   "name": "testmenu",
   "version": "1.0.0",
-  "description": "Persian QR cafe menu with table ordering and a PIN-protected owner panel",
+  "description": "Persian digital cafe menu with a quiet admin panel for dishes, prices and cafe details",
   "scripts": {
     "build": "node scripts/build.mjs --site",
     "build:local": "node scripts/build.mjs --local",

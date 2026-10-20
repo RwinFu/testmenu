@@ -1,27 +1,29 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; connect-src 'self'; font-src 'self'; form-action 'self'; frame-src 'none'; img-src 'self' data:; object-src 'none'; script-src 'self'; style-src 'self'">
   <meta name="referrer" content="no-referrer">
-  <meta name="theme-color" content="#f6f2e9">
+  <meta name="theme-color" content="#f6f1e8">
   <title>QR منوی کافه رُست</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="qr-page">
   <main class="qr-panel">
     <a class="brand" href="index.html">
-      <span class="brand-mark" aria-hidden="true">ر</span>
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h11v5.2A4.8 4.8 0 0 1 10.2 19H8.8A4.8 4.8 0 0 1 4 14.2V9Z"/><path d="M15 10h1.6a2.4 2.4 0 0 1 0 4.8H15M7 6c0-1 1-1 1-2M11 6c0-1 1-1 1-2"/></svg>
+      </span>
       <span>کافه رُست</span>
     </a>
     <h1>منو، همیشه دمِ دست.</h1>
-    <p>این کد را با دوربین گوشی اسکن کن؛ منو باز می‌شود و می‌توانی همان‌جا سفارش بدهی.</p>
+    <p>این کد را با دوربین گوشی اسکن کن تا منوی دیجیتال کافه باز شود.</p>
     <div class="qr-code-wrap">
-      <img src="qr-menu.svg" alt="کد QR منوی دیجیتال کافه رُست" width="216" height="216">
+      <img src="qr-menu.svg" alt="کد QR منوی دیجیتال کافه رُست" width="200" height="200">
     </div>
     <a class="qr-address" href="https://rwinfu.github.io/testmenu/">https://rwinfu.github.io/testmenu/</a>
-    <p class="qr-table-note"><span aria-hidden="true">✦</span> برای هر میز یک نسخه چاپ کن و شمارهٔ میز را رویش بنویس.</p>
+    <p class="qr-table-note"><span aria-hidden="true">✦</span> یک نسخه برای هر میز چاپ کن و کنار سرویس بگذار.</p>
     <div class="qr-actions">
       <button class="btn btn-dark" id="print-button" type="button">چاپ QR</button>
       <a class="btn btn-outline" href="index.html">دیدن منو</a>

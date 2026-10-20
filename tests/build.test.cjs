@@ -7,7 +7,7 @@ function build(mode) {
   execFileSync(process.execPath, ['scripts/build.mjs', mode], { stdio: 'pipe' });
 }
 
-test('public build ships the menu, the cart and the pin-gated owner panel', () => {
+test('public build ships the view-only menu and the pin-gated owner panel', () => {
   build('--site');
   for (const name of ['index.html', 'admin.html', 'qr.html', 'app.js', 'admin.js', 'menu-store.js', 'menu-data.json', 'menu-defaults.js']) {
     assert.equal(fs.existsSync(`_site/${name}`), true, `${name} should be published`);
@@ -15,7 +15,8 @@ test('public build ships the menu, the cart and the pin-gated owner panel', () =
   assert.equal(fs.existsSync('_site/assets/items/latte.jpg'), true);
   assert.equal(fs.existsSync('_site/admin/index.html'), true);
   const adminRedirect = fs.readFileSync('_site/admin/index.html', 'utf8');
-  assert.match(adminRedirect, /index\.html#admin/);
+  assert.match(adminRedirect, /#admin/);
+  assert.match(adminRedirect, /noindex, nofollow/);
   assert.equal(fs.existsSync('_site/tests'), false);
   assert.equal(fs.existsSync('_site/.git'), false);
   assert.equal(fs.existsSync('_site/package.json'), false);
@@ -27,9 +28,14 @@ test('public build ships the menu, the cart and the pin-gated owner panel', () =
   assert.match(index, /Content-Security-Policy/);
   assert.doesNotMatch(index, /\sstyle=/);
   assert.doesNotMatch(index, /\son(click|change|submit)=/);
+  // The customer menu is view-only and has no visible door to the owner panel.
+  assert.doesNotMatch(index, /id="cart-sheet"/);
+  assert.doesNotMatch(index, /id="order-form"/);
+  assert.doesNotMatch(index, /data-add=/);
+  assert.doesNotMatch(index, /href="#admin"/);
 
   const redirect = fs.readFileSync('_site/admin.html', 'utf8');
-  assert.match(redirect, /index\.html#admin/);
+  assert.match(redirect, /#admin/);
   assert.match(redirect, /noindex, nofollow/);
 });
 
