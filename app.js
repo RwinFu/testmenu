@@ -163,7 +163,7 @@
     const query = MenuStore.normalize(state.query);
     const visible = state.data.items.filter(item =>
       (state.category === 'all' || item.category === state.category) &&
-      (!query || MenuStore.normalize(`${item.name} ${item.description}`).includes(query))
+      (!query || MenuStore.normalize(`${item.name} ${item.description} ${Array.isArray(item.ingredients) ? item.ingredients.join(' ') : ''}`).includes(query))
     );
     const groups = state.data.categories
       .map(category => ({ category, items: visible.filter(item => item.category === category.id) }))

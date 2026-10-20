@@ -231,7 +231,7 @@
   function renderMenuList() {
     if (!data) return;
     const query = MenuStore.normalize(menuQuery);
-    const items = data.items.filter(item => !query || MenuStore.normalize(`${item.name} ${item.description}`).includes(query));
+    const items = data.items.filter(item => !query || MenuStore.normalize(`${item.name} ${item.description} ${Array.isArray(item.ingredients) ? item.ingredients.join(' ') : ''}`).includes(query));
     $('#admin-menu-list').innerHTML = items.length ? items.map(item => {
       const category = data.categories.find(entry => entry.id === item.category);
       return `<article class="admin-item">

@@ -15,6 +15,11 @@ test('admin short URL opens the pin screen and dishes list their ingredients', a
   await expect(page.locator('#item-sheet')).toBeVisible();
   await expect(page.locator('.ingredient-chips')).toContainText('شیر تازه');
   await expect(page.locator('.ingredient-chips')).toContainText('اسپرسو');
+
+  await page.goto('/');
+  await page.locator('#menu-search').fill('پسته');
+  await expect(page.locator('.item-card')).toHaveCount(1);
+  await expect(page.locator('.item-card')).toContainText('آیس لاته پسته');
 });
 
 test('customer can browse, filter and search the menu', async ({ page }) => {
