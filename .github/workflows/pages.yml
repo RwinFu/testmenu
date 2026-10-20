@@ -39,8 +39,8 @@ jobs:
         run: npm test
       - name: Build public site
         run: npm run build
-      - name: Verify admin editor is not public
-        run: test -e _site/admin.html && test ! -e _site/admin.js && grep -q 'github.com/RwinFu/testmenu/edit/main/menu-data.json' _site/admin.html
+      - name: Verify published build
+        run: test -e _site/index.html && grep -q 'id="admin-view"' _site/index.html && test -e _site/admin.js && test ! -e _site/tests
       - name: Configure GitHub Pages
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
       - name: Upload website

@@ -1,7 +1,7 @@
 {
   "name": "testmenu",
   "version": "1.0.0",
-  "description": "Mobile-first Persian cafe menu and static menu editor",
+  "description": "Persian QR cafe menu with table ordering and a PIN-protected owner panel",
   "scripts": {
     "build": "node scripts/build.mjs --site",
     "build:local": "node scripts/build.mjs --local",
