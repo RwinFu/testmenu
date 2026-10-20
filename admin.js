@@ -63,6 +63,13 @@
     try { sessionStorage.setItem(ATTEMPTS_KEY, JSON.stringify(value)); } catch { /* ignore */ }
   }
 
+  const parseIngredients = value => Array.from(new Set(String(value || '')
+    .split(/[,،\n]/)
+    .map(part => part.trim())
+    .filter(Boolean)))
+    .slice(0, 10)
+    .map(part => part.slice(0, 30));
+
   const toast = message => window.CafeUI?.toast(message);
   const openSheet = id => window.CafeUI?.openSheet(id);
   const closeSheet = () => window.CafeUI?.closeSheet();
@@ -108,7 +115,9 @@
     $('#admin-login').hidden = false;
     setError('');
     updateHint();
-    setTimeout(() => $('#admin-pin')?.focus({ preventScroll: true }), 120);
+    if (window.matchMedia?.('(pointer: fine)').matches) {
+      setTimeout(() => $('#admin-pin')?.focus({ preventScroll: true }), 120);
+    }
   }
 
   function showApp() {
@@ -264,7 +273,7 @@
     $('#set-whatsapp').value = settings.whatsapp || '';
     $('#set-notice').value = settings.notice || '';
     $('#set-orders-open').checked = settings.ordersOpen;
-    const brand = $('.brand-light span:last-child');
+    const brand = $('#admin-brand-name');
     if (brand) brand.textContent = settings.name;
   }
 
@@ -298,6 +307,7 @@
     $('#edit-name').value = item?.name || '';
     $('#edit-price').value = item?.price ?? '';
     $('#edit-description').value = item?.description || '';
+    $('#edit-ingredients').value = Array.isArray(item?.ingredients) ? item.ingredients.join('، ') : '';
     $('#edit-popular').checked = Boolean(item?.popular);
     $('#edit-available').checked = item ? item.available : true;
     $('#edit-category').innerHTML = data.categories.map(category => `<option value="${esc(category.id)}">${esc(category.name)}</option>`).join('');
@@ -313,6 +323,7 @@
     const price = Number($('#edit-price').value);
     const category = $('#edit-category').value;
     const description = $('#edit-description').value.trim();
+    const ingredients = parseIngredients($('#edit-ingredients').value);
     const image = $('input[name="edit-image"]:checked')?.value;
     if (!name) { toast('نام آیتم را وارد کن.'); $('#edit-name').focus(); return; }
     if (!Number.isSafeInteger(price) || price < 0) { toast('قیمت را درست وارد کن.'); $('#edit-price').focus(); return; }
@@ -320,7 +331,7 @@
     if (!image) { toast('یک تصویر انتخاب کن.'); return; }
     const item = {
       id: editorId || `item-${Date.now().toString(36)}`,
-      name, category, description, price, image,
+      name, category, description, ingredients, price, image,
       popular: $('#edit-popular').checked,
       available: $('#edit-available').checked
     };
@@ -540,8 +551,32 @@
     });
   }
 
+  function bindPinPad() {
+    const pad = $('#pin-pad');
+    const input = $('#admin-pin');
+    if (!pad || !input) return;
+    pad.addEventListener('click', event => {
+      const key = event.target.closest('[data-pin]');
+      if (key) {
+        input.value = `${input.value}${key.dataset.pin}`.slice(0, 12);
+        setError('');
+        return;
+      }
+      if (event.target.closest('[data-pin-clear]')) {
+        input.value = '';
+        setError('');
+        return;
+      }
+      if (event.target.closest('[data-pin-back]')) {
+        input.value = input.value.slice(0, -1);
+        setError('');
+      }
+    });
+  }
+
   function init() {
     bind();
+    bindPinPad();
     updateHint();
     selectTab('orders');
     if (isAuthed() && /^#\/?admin/.test(location.hash)) showApp();

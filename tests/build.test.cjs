@@ -13,6 +13,9 @@ test('public build ships the menu, the cart and the pin-gated owner panel', () =
     assert.equal(fs.existsSync(`_site/${name}`), true, `${name} should be published`);
   }
   assert.equal(fs.existsSync('_site/assets/items/latte.jpg'), true);
+  assert.equal(fs.existsSync('_site/admin/index.html'), true);
+  const adminRedirect = fs.readFileSync('_site/admin/index.html', 'utf8');
+  assert.match(adminRedirect, /index\.html#admin/);
   assert.equal(fs.existsSync('_site/tests'), false);
   assert.equal(fs.existsSync('_site/.git'), false);
   assert.equal(fs.existsSync('_site/package.json'), false);

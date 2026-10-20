@@ -62,6 +62,26 @@ test('rejects duplicate IDs, bad prices, references, images and settings', () =>
   }
 });
 
+test('dish ingredients are optional but validated when present', () => {
+  const { MenuStore } = environment();
+  const without = structuredClone(defaults);
+  without.items.forEach(item => { delete item.ingredients; });
+  assert.equal(MenuStore.validate(without), without);
+
+  const bad = [
+    data => { data.items[0].ingredients = 'شیر'; },
+    data => { data.items[0].ingredients = ['']; },
+    data => { data.items[0].ingredients = [null]; },
+    data => { data.items[0].ingredients = Array.from({ length: 11 }, (_, index) => `item-${index}`); },
+    data => { data.items[0].ingredients = ['x'.repeat(31)]; }
+  ];
+  for (const change of bad) {
+    const data = structuredClone(defaults);
+    change(data);
+    assert.throws(() => MenuStore.validate(data));
+  }
+});
+
 test('normalizes Persian and Arabic letters, diacritics and half spaces', () => {
   const { MenuStore } = environment();
   assert.equal(MenuStore.normalize('آيس كافي'), 'آیس کافی');
