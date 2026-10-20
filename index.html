@@ -3,43 +3,80 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f7f5ef">
-  <meta name="description" content="منوی کافه رُست؛ قهوه، نوشیدنی، صبحانه و دسر. قیمت‌ها به تومان است.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; connect-src 'self'; font-src 'self'; form-action 'self'; frame-src 'none'; img-src 'self' data:; object-src 'none'; script-src 'self'; style-src 'self'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#f8f7f2">
+  <meta name="description" content="منوی دیجیتال کافه رُست؛ نوشیدنی، صبحانه و دسر.">
   <title>کافه رُست | منوی کافه</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="menu-page">
-  <a class="skip-link" href="#menu-search">رفتن به منو</a>
-  <header class="topbar wrap">
-    <a class="brand" href="index.html"><span class="brand-mark">ر</span><span data-setting="name">کافه رُست</span></a>
-    <span class="top-label">قهوه، گفتگو، کمی آرامش</span>
-    <a class="header-link" href="qr.html" aria-label="دریافت کد QR منو"><span aria-hidden="true">▦</span> QR منو</a>
+  <a class="skip-link" href="#menu">رفتن به منو</a>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="#top" aria-label="صفحهٔ اصلی کافه رُست">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 9h12v5.5A4.5 4.5 0 0 1 11.5 19h-3A4.5 4.5 0 0 1 4 14.5V9Z"/>
+            <path d="M16 10h1.5a2.5 2.5 0 0 1 0 5H16M7 5.5c0-1 1-1 1-2M11 5.5c0-1 1-1 1-2M15 5.5c0-1 1-1 1-2"/>
+          </svg>
+        </span>
+        <span data-setting="name">کافه رُست</span>
+      </a>
+    </div>
   </header>
-  <main>
-    <div id="preview-banner" class="notice wrap" hidden>پیش‌نمایش خصوصیِ پیش‌نویس این مرورگر؛ مشتریان این تغییرات را نمی‌بینند. <a href="admin.html">بازگشت به مدیریت ←</a></div>
-    <section class="cafe-intro wrap" aria-labelledby="intro-title">
-      <div class="intro-copy">
-        <span class="eyebrow"><span class="eyebrow-dot"></span><span data-setting="eyebrow">یک مکثِ خوش‌طعم</span></span>
-        <h1 id="intro-title">اینجا، حالِ خوب<br>با <em>طعمِ خوب</em> شروع می‌شه.</h1>
-        <p data-setting="description">قهوه‌ی خوب، خوراکی تازه و چند دقیقه آرامش برای خودت.</p>
-        <div class="intro-meta"><span aria-hidden="true">◷</span> <span data-setting="hours">هر روز، ۸ صبح تا ۱۱ شب</span></div>
-      </div>
-      <div class="intro-photo"><img src="assets/hero-cafe.jpg" alt="یک فنجان قهوه تازه در کافه" width="600" height="400" fetchpriority="high"><span class="photo-label">با حوصله، با عشق <span aria-hidden="true">✳</span></span></div>
+
+  <main id="top">
+    <div id="preview-banner" class="notice wrap" hidden>
+      این پیش‌نمایش فقط پیش‌نویس همین مرورگر را نشان می‌دهد؛ مشتریان این تغییرات را نمی‌بینند.
+    </div>
+
+    <section class="hero wrap" aria-labelledby="intro-title">
+      <span class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span><span data-setting="eyebrow">یک مکثِ خوش‌طعم</span></span>
+      <h1 id="intro-title" data-setting="name">کافه رُست</h1>
+      <p class="hero-description" data-setting="description">قهوه‌ی خوب، خوراکی تازه و چند دقیقه آرامش برای خودت.</p>
+      <p class="hero-hours">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/></svg>
+        <span data-setting="hours">هر روز، ۸ صبح تا ۱۱ شب</span>
+      </p>
+      <label class="search-box">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>
+        <input type="search" id="menu-search" placeholder="جست‌وجو در منو" aria-label="جست‌وجو در منو" autocomplete="off">
+      </label>
     </section>
+
     <section class="menu-section" id="menu" aria-labelledby="menu-title">
-      <div class="wrap menu-heading"><div><span class="eyebrow">هر سلیقه‌ای، یک انتخاب</span><h2 id="menu-title">منوی کافه <span aria-hidden="true">✳</span></h2></div><span class="currency-note">قیمت‌ها به تومان</span></div>
-      <div class="menu-controls"><div class="wrap"><label class="search-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><input type="search" id="menu-search" placeholder="دنبال چی می‌گردی؟" aria-label="جست‌وجو در منو" autocomplete="off"><span class="search-hint">جست‌وجوی نام یا طعم</span></label><div class="category-list" id="category-list" role="group" aria-label="دسته‌بندی منو"></div></div></div>
-      <div class="wrap">
+      <div class="category-sticky">
+        <div class="wrap">
+          <nav class="category-list" id="category-list" aria-label="دسته‌بندی منو"></nav>
+        </div>
+      </div>
+      <div class="wrap menu-content">
+        <div class="menu-heading">
+          <h2 id="menu-title">منوی کافه</h2>
+          <span class="currency-note">قیمت‌ها به تومان</span>
+        </div>
         <div class="notice" id="load-notice" role="status" hidden></div>
-        <div class="menu-status" id="menu-status" aria-live="polite">در حال آماده کردن منو…</div>
+        <p class="menu-status" id="menu-status" aria-live="polite">در حال آماده کردن منو…</p>
         <div class="menu-grid" id="menu-grid" aria-label="آیتم‌های منو"></div>
-        <div class="empty-state" id="empty-state" hidden><span aria-hidden="true">☕</span><h3>انتخابی پیدا نشد</h3><p>نام دیگری جست‌وجو کن یا همهٔ منو را ببین.</p><button class="button button-outline" id="reset-search">نمایش همهٔ منو</button></div>
+        <div class="empty-state" id="empty-state" role="status" hidden>
+          <span aria-hidden="true">⌕</span>
+          <h3>چیزی پیدا نشد</h3>
+          <p>عبارت دیگری را جست‌وجو کن یا همهٔ منو را ببین.</p>
+          <button class="button button-outline" id="reset-search" type="button">نمایش همهٔ منو</button>
+        </div>
         <noscript><p class="notice">برای دیدن منوی کامل، جاوااسکریپت مرورگر را فعال کنید.</p></noscript>
       </div>
     </section>
-    <section class="menu-ending wrap"><span class="ending-mark" aria-hidden="true">✳</span><h2>خوشحالیم که اینجایی.</h2><p>برای ثبت سفارش یا پرسیدن دربارهٔ حساسیت غذایی،<br>با همکاران ما صحبت کن.</p><span class="eyebrow">نوش جان، به وقتِ رُست</span></section>
   </main>
-  <footer class="footer"><div class="wrap footer-inner"><a class="brand" href="index.html"><span class="brand-mark">ر</span><span data-setting="name">کافه رُست</span></a><span>یک فنجان، هزار حالِ خوب.</span><a class="admin-link" href="admin.html">مدیریت منو ↗</a></div></footer>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true">ر</span><span data-setting="name">کافه رُست</span></a>
+      <span class="footer-note">نوش جان ✳</span>
+    </div>
+  </footer>
+
   <script src="menu-defaults.js" defer></script>
   <script src="menu-store.js" defer></script>
   <script src="app.js" defer></script>

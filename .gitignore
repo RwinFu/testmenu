@@ -1,4 +1,5 @@
 node_modules/
 _site/
+_local-site/
 test-results/
 playwright-report/

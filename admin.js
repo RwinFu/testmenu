@@ -6,7 +6,7 @@
   let lastFocus;
   function closeModal() {
     $('#item-modal').hidden = true;
-    document.body.style.overflow = '';
+    document.body.classList.remove('modal-open');
     lastFocus?.focus();
   }
   const $ = selector => document.querySelector(selector);
@@ -78,7 +78,7 @@
     fillCategorySelect(item?.category || data.categories[0].id);
     $('#item-image').value = item?.image || 'assets/hero-cafe.jpg';
     lastFocus = document.activeElement;
-    $('#item-modal').hidden = false; document.body.style.overflow = 'hidden'; $('#item-name').focus();
+    $('#item-modal').hidden = false; document.body.classList.add('modal-open'); $('#item-name').focus();
   }
   function bind() {
     $('#admin-search').addEventListener('input', renderItems);
