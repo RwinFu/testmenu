@@ -4,9 +4,10 @@
   "description": "Mobile-first Persian cafe menu and static menu editor",
   "scripts": {
     "build": "node scripts/build.mjs --site",
-    "test": "node --test tests/store.test.cjs",
+    "build:local": "node scripts/build.mjs --local",
+    "test": "node --test tests/store.test.cjs tests/build.test.cjs",
     "test:e2e": "playwright test",
-    "start": "python3 -m http.server 8000 --bind 0.0.0.0 --directory _site"
+    "start": "npm run build:local && python3 -m http.server 8000 --bind 0.0.0.0 --directory _local-site"
   },
   "repository": {
     "type": "git",

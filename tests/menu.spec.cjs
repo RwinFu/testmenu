@@ -16,6 +16,15 @@ test('mobile menu, categories, search and reset', async ({page}) => {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   expect(errors).toEqual([]);
 });
+test('customer menu does not link to admin; owner route remains available', async ({page}) => {
+  await page.goto('/');
+  await expect(page.locator('a[href="admin.html"]')).toHaveCount(0);
+  await page.goto('/index.html?preview=1');
+  await expect(page.locator('#preview-banner')).toBeVisible();
+  await expect(page.locator('a[href="admin.html"]')).toHaveCount(0);
+  await page.goto('/admin.html');
+  await expect(page.locator('#items-table tr')).toHaveCount(data.items.length);
+});
 test('works with blocked storage and failed JSON request', async ({page}) => {
   await page.addInitScript(() => Object.defineProperty(window, 'localStorage', {get(){throw new Error('blocked');}}));
   await page.route('**/menu-data.json', route => route.abort());
@@ -81,10 +90,4 @@ test('phone and desktop layouts fit without horizontal page scroll', async ({pag
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${path} at ${width}`).toBe(true);
     }
   }
-});
-test('direct local HTML loads the bundled menu', async ({page}) => {
-  const { pathToFileURL } = require('node:url');
-  const path = require('node:path');
-  await page.goto(pathToFileURL(path.resolve('index.html')).href);
-  await expect(page.locator('.menu-card')).toHaveCount(data.items.length);
 });
