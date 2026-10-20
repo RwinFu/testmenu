@@ -13,6 +13,8 @@
 
   const text = (value, max) => typeof value === 'string' && value.length <= max;
   const clone = value => JSON.parse(JSON.stringify(value));
+  const validIngredients = value => value === undefined || (Array.isArray(value) && value.length <= 10 &&
+    value.every(part => text(part, 30) && Boolean(part.trim())));
 
   function withDefaults(input) {
     if (!input || typeof input !== 'object' || Array.isArray(input)) return input;
@@ -41,7 +43,8 @@
     data.items.forEach(item => {
       if (!item || !text(item.id, 80) || !item.id || itemIds.has(item.id) ||
           !categoryIds.has(item.category) || !text(item.name, 60) || !item.name.trim() ||
-          !text(item.description, 150) || !Number.isSafeInteger(item.price) || item.price < 0 || item.price > 1e10 ||
+          !text(item.description, 150) || !validIngredients(item.ingredients) ||
+          !Number.isSafeInteger(item.price) || item.price < 0 || item.price > 1e10 ||
           !text(item.image, 120) || !IMAGE_PATTERN.test(item.image) ||
           typeof item.available !== 'boolean' || typeof item.popular !== 'boolean') throw new Error('اطلاعات آیتم منو معتبر نیست.');
       itemIds.add(item.id);

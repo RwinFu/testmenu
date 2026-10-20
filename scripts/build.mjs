@@ -16,6 +16,7 @@ function build(directory) {
   rmSync(directory, { recursive: true, force: true });
   mkdirSync(directory, { recursive: true });
   for (const name of files) copyFileSync(name, `${directory}/${name}`);
+  cpSync('admin', `${directory}/admin`, { recursive: true });
   cpSync('assets', `${directory}/assets`, { recursive: true });
 }
 

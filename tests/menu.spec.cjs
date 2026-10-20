@@ -3,6 +3,25 @@ const fs = require('node:fs');
 const data = JSON.parse(fs.readFileSync('menu-data.json', 'utf8'));
 const coffeeCount = data.items.filter(item => item.category === 'coffee').length;
 
+
+test('admin short URL opens the pin screen and dishes list their ingredients', async ({ page }) => {
+  await page.goto('/admin/');
+  await expect(page).toHaveURL(/#admin$/);
+  await expect(page.locator('#admin-login')).toBeVisible();
+  await expect(page.locator('#admin-pin')).toBeVisible();
+
+  await page.goto('/');
+  await page.locator('[data-open="latte"]').click();
+  await expect(page.locator('#item-sheet')).toBeVisible();
+  await expect(page.locator('.ingredient-chips')).toContainText('شیر تازه');
+  await expect(page.locator('.ingredient-chips')).toContainText('اسپرسو');
+
+  await page.goto('/');
+  await page.locator('#menu-search').fill('پسته');
+  await expect(page.locator('.item-card')).toHaveCount(1);
+  await expect(page.locator('.item-card')).toContainText('آیس لاته پسته');
+});
+
 test('customer can browse, filter and search the menu', async ({ page }) => {
   const errors = [];
   page.on('pageerror', error => errors.push(error));

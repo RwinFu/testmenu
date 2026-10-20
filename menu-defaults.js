@@ -39,6 +39,10 @@ window.MENU_DEFAULTS = {
       "name": "اسپرسو دبل",
       "category": "coffee",
       "description": "دانهٔ ترکیبی خانه، عصاره‌گیری کوتاه و کرمای غلیظ",
+      "ingredients": [
+        "دانهٔ قهوهٔ ترکیبی خانه",
+        "آب معدنی"
+      ],
       "price": 95000,
       "image": "assets/items/espresso.jpg",
       "popular": true,
@@ -49,6 +53,10 @@ window.MENU_DEFAULTS = {
       "name": "آمریکانو",
       "category": "coffee",
       "description": "اسپرسو دبل و آب داغ؛ ساده، خوش‌عطر و بی‌دردسر",
+      "ingredients": [
+        "اسپرسو دبل",
+        "آب داغ"
+      ],
       "price": 110000,
       "image": "assets/items/americano.jpg",
       "popular": false,
@@ -59,6 +67,11 @@ window.MENU_DEFAULTS = {
       "name": "کافه لاته",
       "category": "coffee",
       "description": "اسپرسو و شیر بخار‌داده با لاته‌آرت روز",
+      "ingredients": [
+        "اسپرسو",
+        "شیر تازه",
+        "فوم شیر"
+      ],
       "price": 145000,
       "image": "assets/items/latte.jpg",
       "popular": true,
@@ -69,6 +82,11 @@ window.MENU_DEFAULTS = {
       "name": "موکا شکلاتی",
       "category": "coffee",
       "description": "اسپرسو، شکلات تلخ و شیر؛ گرم و دلچسب",
+      "ingredients": [
+        "اسپرسو",
+        "شکلات تلخ",
+        "شیر تازه"
+      ],
       "price": 165000,
       "image": "assets/items/mocha.jpg",
       "popular": false,
@@ -79,6 +97,12 @@ window.MENU_DEFAULTS = {
       "name": "آیس لاته پسته",
       "category": "cold",
       "description": "شیر، اسپرسو و کرم پستهٔ دست‌ساز روی یخ",
+      "ingredients": [
+        "اسپرسو",
+        "شیر",
+        "کرم پسته",
+        "یخ"
+      ],
       "price": 185000,
       "image": "assets/coffee.jpg",
       "popular": true,
@@ -89,6 +113,10 @@ window.MENU_DEFAULTS = {
       "name": "کلدبرو",
       "category": "cold",
       "description": "دم‌آوری سرد ۱۸ ساعته با طعمی نرم و شکلاتی",
+      "ingredients": [
+        "قهوهٔ دم‌آوری سرد",
+        "یخ"
+      ],
       "price": 155000,
       "image": "assets/items/coldbrew.jpg",
       "popular": false,
@@ -99,6 +127,12 @@ window.MENU_DEFAULTS = {
       "name": "لیموناد تازه",
       "category": "cold",
       "description": "لیموترش تازه، نعناع و شیرینی ملایم",
+      "ingredients": [
+        "لیموترش تازه",
+        "نعناع",
+        "شربت ساده",
+        "یخ"
+      ],
       "price": 135000,
       "image": "assets/items/lemonade.jpg",
       "popular": false,
@@ -109,6 +143,10 @@ window.MENU_DEFAULTS = {
       "name": "کروسان کره‌ای",
       "category": "brunch",
       "description": "هر روز تازه، لایه‌لایه و طلایی با کرهٔ فرانسوی",
+      "ingredients": [
+        "خمیر کروسان",
+        "کرهٔ فرانسوی"
+      ],
       "price": 125000,
       "image": "assets/brunch.jpg",
       "popular": true,
@@ -119,6 +157,12 @@ window.MENU_DEFAULTS = {
       "name": "تست آووکادو",
       "category": "brunch",
       "description": "نان خمیرترش، آووکادو، تخم‌مرغ و سبزی تازه",
+      "ingredients": [
+        "نان خمیرترش",
+        "آووکادو",
+        "تخم‌مرغ",
+        "سبزی تازه"
+      ],
       "price": 265000,
       "image": "assets/items/avocado.jpg",
       "popular": false,
@@ -129,6 +173,12 @@ window.MENU_DEFAULTS = {
       "name": "پنکیک عسل و توت",
       "category": "brunch",
       "description": "پنکیک نرم با عسل، کره و میوهٔ فصل",
+      "ingredients": [
+        "خمیر پنکیک",
+        "عسل",
+        "کره",
+        "میوهٔ فصل"
+      ],
       "price": 235000,
       "image": "assets/items/pancake.jpg",
       "popular": false,
@@ -139,6 +189,12 @@ window.MENU_DEFAULTS = {
       "name": "کلاب ساندویچ",
       "category": "brunch",
       "description": "نان تست، مرغ گریل، سبزیجات تازه و سیب‌زمینی سرخ‌کرده",
+      "ingredients": [
+        "نان تست",
+        "مرغ گریل",
+        "سبزیجات تازه",
+        "سیب‌زمینی سرخ‌کرده"
+      ],
       "price": 245000,
       "image": "assets/items/club.jpg",
       "popular": false,
@@ -149,6 +205,12 @@ window.MENU_DEFAULTS = {
       "name": "کیک شکلاتی",
       "category": "dessert",
       "description": "گاناش شکلات تلخ با بافتی لطیف و مرطوب",
+      "ingredients": [
+        "کاکائو",
+        "شکلات تلخ",
+        "خامه",
+        "تخم‌مرغ"
+      ],
       "price": 175000,
       "image": "assets/dessert.jpg",
       "popular": true,
@@ -159,6 +221,12 @@ window.MENU_DEFAULTS = {
       "name": "چیزکیک باسک",
       "category": "dessert",
       "description": "چیزکیک باسک؛ برشته از بیرون، خامه‌ای در مرکز",
+      "ingredients": [
+        "پنیر خامه‌ای",
+        "تخم‌مرغ",
+        "شکر",
+        "خامه"
+      ],
       "price": 185000,
       "image": "assets/items/cheesecake.jpg",
       "popular": false,
@@ -169,6 +237,12 @@ window.MENU_DEFAULTS = {
       "name": "براونی شکلاتی",
       "category": "dessert",
       "description": "گرم و نرم با تکه‌های شکلات تلخ",
+      "ingredients": [
+        "شکلات تلخ",
+        "کره",
+        "تخم‌مرغ",
+        "آرد"
+      ],
       "price": 85000,
       "image": "assets/items/brownie.jpg",
       "popular": false,

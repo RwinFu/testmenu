@@ -140,18 +140,21 @@
         ? '<span class="sold-note">سفارش بسته است</span>'
         : `<button class="add-btn" type="button" data-add="${esc(item.id)}" aria-label="افزودن ${esc(item.name)} به سفارش">+</button>`;
     return `<article class="item-card${item.available ? '' : ' is-out'}">
-      <button class="item-main" type="button" data-open="${esc(item.id)}" aria-label="${esc(item.name)} — دیدن جزئیات">
+      <button class="item-main" type="button" data-open="${esc(item.id)}" aria-label="${esc(item.name)}، ${money(item.price)} تومان — دیدن جزئیات و ترکیبات">
         <span class="item-thumb">
-          <img src="${esc(item.image)}" alt="" width="96" height="96" loading="lazy">
+          <img src="${esc(item.image)}" alt="${esc(item.name)}" width="320" height="240" loading="lazy">
           ${item.popular && item.available ? '<span class="badge">محبوب</span>' : ''}
+          ${item.available ? '' : '<span class="badge badge-out">ناموجود</span>'}
         </span>
         <span class="item-body">
           <span class="item-name">${esc(item.name)}</span>
           <span class="item-desc">${esc(item.description)}</span>
-          <span class="price">${money(item.price)} <small>تومان</small></span>
         </span>
       </button>
-      <div class="item-action">${action}</div>
+      <div class="item-foot">
+        <span class="price">${money(item.price)} <small>تومان</small></span>
+        <div class="item-action">${action}</div>
+      </div>
     </article>`;
   }
 
@@ -160,7 +163,7 @@
     const query = MenuStore.normalize(state.query);
     const visible = state.data.items.filter(item =>
       (state.category === 'all' || item.category === state.category) &&
-      (!query || MenuStore.normalize(`${item.name} ${item.description}`).includes(query))
+      (!query || MenuStore.normalize(`${item.name} ${item.description} ${Array.isArray(item.ingredients) ? item.ingredients.join(' ') : ''}`).includes(query))
     );
     const groups = state.data.categories
       .map(category => ({ category, items: visible.filter(item => item.category === category.id) }))
@@ -199,13 +202,18 @@
     const closed = !state.data.settings.ordersOpen;
     const canAdd = item.available && !closed;
     const lineTotal = item.price * state.detailQty;
+    const ingredients = Array.isArray(item.ingredients) ? item.ingredients.filter(part => typeof part === 'string' && part.trim()) : [];
     $('#item-sheet-title').textContent = item.name;
     body.innerHTML = `<div class="item-hero">
         <img src="${esc(item.image)}" alt="${esc(item.name)}">
-        ${item.popular && item.available ? '<span class="badge">محبوب</span>' : ''}
+        ${item.popular && item.available ? '<span class="badge">محبوب کافه</span>' : ''}
         ${item.available ? '' : '<span class="badge badge-out">ناموجود</span>'}
       </div>
       <p class="item-info-desc">${esc(item.description) || 'بدون توضیح.'}</p>
+      ${ingredients.length ? `<section class="ingredient-block" aria-labelledby="ingredients-title">
+        <h3 id="ingredients-title">ترکیبات</h3>
+        <ul class="ingredient-chips">${ingredients.map(part => `<li>${esc(part)}</li>`).join('')}</ul>
+      </section>` : ''}
       <div class="qty-row">
         <span class="qty-price">${money(item.price)} <small>تومان</small></span>
         <div class="qty">
@@ -358,7 +366,7 @@
     $('#success-body').innerHTML = `<div class="success-wrap">
         <div class="success-check" aria-hidden="true">✓</div>
         <h2 id="success-title">سفارش ثبت شد</h2>
-        <p>برای ویتر فرستادیم؛ چند لحظه دیگه سر میزت میاد.</p>
+        <p>${whatsappNumber() ? 'برای رسیدن سفارش به کافه، آن را در واتساپ بفرست؛ یا همین کد را به ویتر نشان بده.' : 'این کد را به ویتر نشان بده تا سفارشت را آماده کند.'}</p>
         <div class="order-code">
           <span>کد سفارش</span>
           <strong>${esc(order.code)}</strong>
