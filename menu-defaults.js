@@ -3,13 +3,11 @@ window.MENU_DEFAULTS = {
   "settings": {
     "name": "کافه رُست",
     "eyebrow": "قهوهٔ تازه، هر روز",
-    "description": "قهوهٔ دست‌ساز، صبحانهٔ گرم و دسر خانگی — سفارشت رو از میز بده، بقیه‌اش با ما.",
+    "description": "قهوهٔ دست‌ساز، صبحانهٔ گرم و دسر خانگی — منوی دیجیتال کافه.",
     "hours": "هر روز، ۸ صبح تا ۱۱ شب",
     "phone": "",
     "instagram": "",
-    "notice": "",
-    "ordersOpen": true,
-    "whatsapp": ""
+    "notice": ""
   },
   "categories": [
     {

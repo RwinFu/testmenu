@@ -5,12 +5,11 @@ const fs = require('node:fs');
 
 const defaults = JSON.parse(fs.readFileSync('menu-data.json', 'utf8'));
 const source = fs.readFileSync('menu-store.js', 'utf8');
-const MENU_KEY = 'rost-cafe-menu-v2';
+const MENU_KEY = 'rost-menu-v3';
 
-function environment({ savedMenu = null, orders = null, blocked = false, fetchImpl = null, protocol = 'https:' } = {}) {
+function environment({ savedMenu = null, blocked = false, fetchImpl = null, protocol = 'https:' } = {}) {
   const memory = new Map();
   if (savedMenu) memory.set(MENU_KEY, JSON.stringify(savedMenu));
-  if (orders) memory.set('rost-orders-v1', JSON.stringify(orders));
   const localStorage = blocked ? {
     getItem() { throw new Error('blocked'); },
     setItem() { throw new Error('blocked'); },
@@ -27,16 +26,21 @@ function environment({ savedMenu = null, orders = null, blocked = false, fetchIm
     fetch: fetchImpl || (async () => ({ ok: true, json: async () => defaults }))
   };
   vm.runInNewContext(source, context);
-  return { MenuStore: window.MenuStore, OrderStore: window.OrderStore, memory };
+  return { MenuStore: window.MenuStore, memory };
 }
 
-test('published menu validates and defaults fill optional fields', () => {
+test('published menu validates and defaults fill optional café fields', () => {
   const { MenuStore } = environment();
   assert.equal(MenuStore.validate(defaults), defaults);
   const stripped = structuredClone(defaults);
   delete stripped.settings.notice;
-  delete stripped.settings.ordersOpen;
-  assert.equal(MenuStore.validate(MenuStore.withDefaults(stripped)).settings.ordersOpen, true);
+  delete stripped.settings.phone;
+  stripped.settings.ordersOpen = true;
+  const filled = MenuStore.withDefaults(stripped);
+  assert.equal(filled.settings.notice, '');
+  assert.equal(filled.settings.phone, '');
+  assert.equal('ordersOpen' in filled.settings, false);
+  assert.equal(MenuStore.validate(filled), filled);
 });
 
 test('rejects duplicate IDs, bad prices, references, images and settings', () => {
@@ -46,14 +50,16 @@ test('rejects duplicate IDs, bad prices, references, images and settings', () =>
     data => data.categories.push(data.categories[0]),
     data => { data.items[0].price = -1; },
     data => { data.items[0].price = '100'; },
+    data => { data.items[0].price = 1.5; },
     data => { data.items[0].category = 'missing'; },
     data => { data.items[0].image = 'javascript:alert(1)'; },
     data => { data.items[0].image = 'assets/../.git/config'; },
     data => { data.settings = {}; },
-    data => { data.settings.ordersOpen = 'yes'; },
-    data => { data.settings.whatsapp = 5; },
+    data => { data.settings.name = ''; },
+    data => { data.settings.description = 'x'.repeat(201); },
     data => { data.items[0].available = 'yes'; },
-    data => { data.items[0].name = ''; }
+    data => { data.items[0].name = ''; },
+    data => { data.categories.length = 0; data.items[0].category = 'all'; }
   ];
   for (const change of changes) {
     const data = structuredClone(defaults);
@@ -131,44 +137,8 @@ test('saving and resetting the menu are validated', async () => {
   next.items[0].price = 123456;
   MenuStore.save(next);
   assert.equal((await MenuStore.load()).data.items[0].price, 123456);
+  assert.equal(MenuStore.readSavedMenu().items[0].price, 123456);
   assert.throws(() => MenuStore.save({ ...next, items: [{ ...next.items[0], image: 'http://evil.test/x.jpg' }] }));
   MenuStore.resetMenu();
-  assert.equal((await MenuStore.load()).data.items[0].price, defaults.items[0].price);
-});
-
-test('orders are created with a safe total and follow the status flow', () => {
-  const { OrderStore } = environment();
-  const order = OrderStore.add({
-    code: '1234', table: '5', note: 'بدون شکر',
-    items: [
-      { id: 'latte', name: 'کافه لاته', price: 145000, qty: 2 },
-      { id: 'brownie', name: 'براونی شکلاتی', price: 85000, qty: 1 }
-    ]
-  });
-  assert.equal(order.total, 375000);
-  assert.equal(order.status, 'new');
-  assert.equal(OrderStore.list().length, 1);
-  assert.equal(OrderStore.update(order.id, { status: 'preparing' }).status, 'preparing');
-  assert.equal(OrderStore.list()[0].status, 'preparing');
-  assert.throws(() => OrderStore.update(order.id, { status: 'done' }));
-  assert.throws(() => OrderStore.update('missing', { status: 'served' }));
-});
-
-test('invalid orders and an empty table are rejected', () => {
-  const { OrderStore } = environment();
-  assert.throws(() => OrderStore.add({ table: '', items: [{ id: 'x', name: 'x', price: 1000, qty: 1 }] }));
-  assert.throws(() => OrderStore.add({ table: '3', items: [] }));
-  assert.throws(() => OrderStore.add({ table: '3', items: [{ id: 'x', name: 'x', price: 1000, qty: 0 }] }));
-  assert.throws(() => OrderStore.add({ table: '3', items: [{ id: 'x', name: 'x', price: -5, qty: 1 }] }));
-  assert.equal(OrderStore.list().length, 0);
-});
-
-test('tracking remembers only this device orders and clearing removes them', () => {
-  const { OrderStore } = environment();
-  const order = OrderStore.add({ table: '7', items: [{ id: 'espresso', name: 'اسپرسو دبل', price: 95000, qty: 1 }] });
-  OrderStore.rememberMine(order.id);
-  assert.deepEqual(JSON.parse(JSON.stringify(OrderStore.myIds())), [order.id]);
-  OrderStore.clear();
-  assert.equal(OrderStore.list().length, 0);
-  assert.deepEqual(Array.from(OrderStore.myIds()), []);
+  assert.equal(MenuStore.readSavedMenu(), null);
 });

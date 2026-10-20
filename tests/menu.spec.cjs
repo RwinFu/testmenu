@@ -3,8 +3,14 @@ const fs = require('node:fs');
 const data = JSON.parse(fs.readFileSync('menu-data.json', 'utf8'));
 const coffeeCount = data.items.filter(item => item.category === 'coffee').length;
 
+async function login(page) {
+  await page.goto('/#admin');
+  await page.locator('#admin-pin').fill('1234');
+  await page.getByRole('button', { name: 'ورود به پنل' }).click();
+  await expect(page.locator('#admin-app')).toBeVisible();
+}
 
-test('admin short URL opens the pin screen and dishes list their ingredients', async ({ page }) => {
+test('the admin short URL opens the pin screen and dishes list their ingredients', async ({ page }) => {
   await page.goto('/admin/');
   await expect(page).toHaveURL(/#admin$/);
   await expect(page.locator('#admin-login')).toBeVisible();
@@ -15,93 +21,51 @@ test('admin short URL opens the pin screen and dishes list their ingredients', a
   await expect(page.locator('#item-sheet')).toBeVisible();
   await expect(page.locator('.ingredient-chips')).toContainText('شیر تازه');
   await expect(page.locator('.ingredient-chips')).toContainText('اسپرسو');
+  await expect(page.locator('#item-sheet')).not.toContainText('افزودن');
 
   await page.goto('/');
   await page.locator('#menu-search').fill('پسته');
-  await expect(page.locator('.item-card')).toHaveCount(1);
-  await expect(page.locator('.item-card')).toContainText('آیس لاته پسته');
+  await expect(page.locator('.menu-item')).toHaveCount(1);
+  await expect(page.locator('.menu-item')).toContainText('آیس لاته پسته');
 });
 
-test('customer can browse, filter and search the menu', async ({ page }) => {
+test('the menu is view-only and customers can browse, filter and search it', async ({ page }) => {
   const errors = [];
   page.on('pageerror', error => errors.push(error));
   await page.goto('/');
-  await expect(page.locator('.item-card')).toHaveCount(data.items.length);
+  await expect(page.locator('.menu-item')).toHaveCount(data.items.length);
   await page.locator('.cat-chip', { hasText: 'قهوهٔ گرم' }).click();
-  await expect(page.locator('.item-card')).toHaveCount(coffeeCount);
+  await expect(page.locator('.menu-item')).toHaveCount(coffeeCount);
   await page.locator('#menu-search').fill('آمري');
-  await expect(page.locator('.item-card')).toHaveCount(1);
+  await expect(page.locator('.menu-item')).toHaveCount(1);
   await page.locator('#menu-search').fill('چیزی که نداریم');
   await expect(page.locator('#empty-state')).toBeVisible();
   await page.locator('#reset-search').click();
-  await expect(page.locator('.item-card')).toHaveCount(data.items.length);
+  await expect(page.locator('.menu-item')).toHaveCount(data.items.length);
+
+  // No cart, no add button and no visible link into the owner panel.
+  await expect(page.locator('[data-add]')).toHaveCount(0);
+  await expect(page.locator('#cart-sheet')).toHaveCount(0);
+  await expect(page.locator('.site-foot').getByText('ورود مدیر')).toHaveCount(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   expect(errors).toEqual([]);
 });
 
-test('customer orders from the table and the owner sees it live', async ({ page }) => {
-  await page.goto('/?table=5');
-  await expect(page.locator('#head-table')).toBeVisible();
-  await expect(page.locator('#head-table')).toContainText('میز 5');
-
-  await page.locator('[data-add="espresso"]').click();
-  await page.locator('[data-add="latte"]').click();
-  await expect(page.locator('#cart-count')).toHaveText('۲');
-  await page.locator('#cart-bar-btn').click();
-  await expect(page.locator('#cart-sheet')).toBeVisible();
-  await expect(page.locator('#table-input')).toHaveValue('5');
-  await page.locator('#note-input').fill('بدون شکر');
-  await page.locator('#submit-order').click();
-
-  await expect(page.locator('#success-sheet')).toBeVisible();
-  const code = (await page.locator('.order-code strong').textContent()).trim();
-  expect(code).toMatch(/^\d{4}$/);
-  await expect(page.locator('#success-status')).toContainText('سفارش جدید');
-  await page.getByRole('button', { name: 'پیگیری سفارش' }).click();
-  await expect(page.locator('#my-orders-sheet')).toBeVisible();
-  await expect(page.locator('#my-orders-body')).toContainText(code);
-
-  await page.goto('/#admin');
-  await expect(page.locator('#admin-login')).toBeVisible();
-  await page.locator('#admin-pin').fill('0000');
-  await page.getByRole('button', { name: 'ورود به پنل' }).click();
-  await expect(page.locator('#login-error')).toBeVisible();
-  await page.locator('#admin-pin').fill('1234');
-  await page.getByRole('button', { name: 'ورود به پنل' }).click();
-  await expect(page.locator('#admin-app')).toBeVisible();
-  await expect(page.locator('.order-card')).toHaveCount(1);
-  await expect(page.locator('.order-card')).toContainText(code);
-  await expect(page.locator('.order-card')).toContainText('میز 5');
-  await expect(page.locator('.order-card')).toContainText('بدون شکر');
-
-  await page.getByRole('button', { name: 'شروع آماده‌سازی' }).click();
-  await expect(page.locator('.order-card .status-pill')).toHaveText('در حال آماده‌سازی');
-
-  await page.goto('/');
-  await page.locator('#cart-trigger').click();
-  await page.locator('#open-my-orders').click();
-  await expect(page.locator('#my-orders-body .status-pill')).toHaveText('در حال آماده‌سازی');
-});
-
-test('owner edits availability, prices and adds an item', async ({ page }) => {
-  await page.goto('/#admin');
-  await page.locator('#admin-pin').fill('1234');
-  await page.getByRole('button', { name: 'ورود به پنل' }).click();
-  await expect(page.locator('#admin-app')).toBeVisible();
+test('owner can hide a dish, change a price and add a new item', async ({ page }) => {
+  await login(page);
 
   await page.locator('[data-admin-tab="menu"]').click();
   await page.locator('[data-availability="espresso"]').uncheck();
   await expect(page.locator('#toast')).toContainText('ناموجود');
 
   await page.goto('/');
-  const espresso = page.locator('.item-card').filter({ has: page.locator('[data-open="espresso"]') });
+  const espresso = page.locator('.menu-item').filter({ has: page.locator('[data-open="espresso"]') });
   await expect(espresso).toContainText('ناموجود');
-  await expect(page.locator('[data-add="espresso"]')).toHaveCount(0);
 
   await page.goto('/#admin');
   await expect(page.locator('#admin-app')).toBeVisible();
   await page.locator('[data-admin-tab="menu"]').click();
-  await page.locator('[data-edit-item="latte"]').click();
+  await page.locator('.admin-item-text[data-edit-item="latte"]').click();
   await expect(page.locator('#item-editor')).toBeVisible();
   await page.locator('#edit-price').fill('150000');
   await page.getByRole('button', { name: 'ذخیرهٔ آیتم' }).click();
@@ -115,54 +79,61 @@ test('owner edits availability, prices and adds an item', async ({ page }) => {
   await expect(page.locator('#admin-menu-list')).toContainText('کیک تست');
 
   await page.goto('/');
-  await expect(page.locator('.item-card')).toHaveCount(data.items.length + 1);
-  await expect(page.locator('.item-card').filter({ has: page.locator('[data-open="latte"]') })).toContainText('۱۵۰٬۰۰۰');
+  await expect(page.locator('.menu-item')).toHaveCount(data.items.length + 1);
+  await expect(page.locator('.menu-item').filter({ has: page.locator('[data-open="latte"]') })).toContainText('۱۵۰٬۰۰۰');
 });
 
-test('order can be forwarded to the cafe WhatsApp when configured', async ({ page }) => {
-  await page.goto('/#admin');
-  await page.locator('#admin-pin').fill('1234');
-  await page.getByRole('button', { name: 'ورود به پنل' }).click();
+test('owner can edit café details, add a category and change the PIN', async ({ page }) => {
+  await login(page);
   await page.locator('[data-admin-tab="settings"]').click();
-  await page.locator('#set-whatsapp').fill('989121234567');
-  await page.getByRole('button', { name: 'ذخیرهٔ اطلاعات' }).click();
-  await expect(page.locator('#toast')).toContainText('ذخیره');
-
-  await page.goto('/?table=2');
-  await page.locator('[data-add="espresso"]').click();
-  await page.locator('#cart-bar-btn').click();
-  await page.locator('#submit-order').click();
-  const link = page.getByRole('link', { name: 'ارسال سفارش در واتساپ' });
-  await expect(link).toBeVisible();
-  const href = await link.getAttribute('href');
-  expect(href).toContain('https://wa.me/989121234567?text=');
-  const text = decodeURIComponent(href.split('?text=')[1]);
-  expect(text).toContain('میز: 2');
-  expect(text).toContain('اسپرسو دبل');
-  await page.goto('/');
-  await expect(page.locator('#foot-links')).toContainText('واتساپ کافه');
-});
-
-test('closed ordering and a saved cafe notice are respected', async ({ page }) => {
-  await page.goto('/#admin');
-  await page.locator('#admin-pin').fill('1234');
-  await page.getByRole('button', { name: 'ورود به پنل' }).click();
-  await page.locator('[data-admin-tab="settings"]').click();
+  await page.locator('#set-name').fill('کافه تست');
   await page.locator('#set-notice').fill('امروز دسر ویژه داریم.');
-  await page.locator('#set-orders-open').uncheck();
   await page.getByRole('button', { name: 'ذخیرهٔ اطلاعات' }).click();
   await expect(page.locator('#toast')).toContainText('ذخیره');
 
   await page.goto('/');
   await expect(page.locator('#notice-banner')).toContainText('امروز دسر ویژه داریم.');
-  await expect(page.locator('[data-add]')).toHaveCount(0);
+  await expect(page.locator('.brand-name').first()).toHaveText('کافه تست');
+
+  await page.goto('/#admin');
+  await expect(page.locator('#admin-app')).toBeVisible();
+  await page.locator('[data-admin-tab="settings"]').click();
+  await page.locator('#cat-name').fill('نوشیدنی گرم');
+  await page.locator('#category-form').getByRole('button', { name: 'افزودن' }).click();
+  await expect(page.locator('#admin-categories')).toContainText('نوشیدنی گرم');
+
+  await page.locator('#pin-current').fill('1234');
+  await page.locator('#pin-new').fill('4321');
+  await page.locator('#pin-form').getByRole('button', { name: 'تغییر رمز' }).click();
+  await expect(page.locator('#toast')).toContainText('رمز مدیر عوض شد');
+
+  await page.locator('#admin-logout').click();
+  await page.locator('#admin-pin').fill('1234');
+  await page.getByRole('button', { name: 'ورود به پنل' }).click();
+  await expect(page.locator('#login-error')).toBeVisible();
+  await page.locator('#admin-pin').fill('4321');
+  await page.getByRole('button', { name: 'ورود به پنل' }).click();
+  await expect(page.locator('#admin-app')).toBeVisible();
+});
+
+test('owner can download the current menu as menu-data.json', async ({ page }) => {
+  await login(page);
+  await page.locator('[data-admin-tab="settings"]').click();
+  const [download] = await Promise.all([
+    page.waitForEvent('download'),
+    page.locator('#download-menu').click()
+  ]);
+  expect(download.suggestedFilename()).toBe('menu-data.json');
+  const exported = JSON.parse(fs.readFileSync(await download.path(), 'utf8'));
+  expect(exported.items.length).toBe(data.items.length);
+  expect(exported.settings.name).toBe(data.settings.name);
 });
 
 test('works with blocked storage and failed JSON request', async ({ page }) => {
   await page.addInitScript(() => Object.defineProperty(window, 'localStorage', { get() { throw new Error('blocked'); } }));
   await page.route('**/menu-data.json', route => route.abort());
   await page.goto('/');
-  await expect(page.locator('.item-card')).toHaveCount(data.items.length);
+  await expect(page.locator('.menu-item')).toHaveCount(data.items.length);
   await expect(page.locator('#notice-banner')).toBeVisible();
 });
 
