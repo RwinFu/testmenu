@@ -1,0 +1,25 @@
+{
+  "name": "testmenu",
+  "version": "1.0.0",
+  "description": "Mobile-first Persian cafe menu and static menu editor",
+  "scripts": {
+    "build": "node scripts/build.mjs --site",
+    "test": "node --test tests/store.test.cjs",
+    "test:e2e": "playwright test",
+    "start": "python3 -m http.server 8000 --bind 0.0.0.0 --directory _site"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RwinFu/testmenu.git"
+  },
+  "keywords": [],
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/RwinFu/testmenu/issues"
+  },
+  "homepage": "https://github.com/RwinFu/testmenu#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.64.1"
+  },
+  "private": true
+}
