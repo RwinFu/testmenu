@@ -4,33 +4,51 @@ const fs = require('node:fs');
 const { execFileSync } = require('node:child_process');
 
 function build(mode) {
-  execFileSync(process.execPath, ['scripts/build.mjs', mode], { stdio:'pipe' });
+  execFileSync(process.execPath, ['scripts/build.mjs', mode], { stdio: 'pipe' });
 }
 
-test('public Pages artifact exposes only a GitHub-authenticated admin gateway', () => {
+test('public build ships the menu, the cart and the pin-gated owner panel', () => {
   build('--site');
-  assert.equal(fs.existsSync('_site/admin.html'), true);
-  assert.equal(fs.existsSync('_site/admin.js'), false);
-  assert.equal(fs.existsSync('_site/index.html'), true);
-  assert.equal(fs.existsSync('_site/qr.js'), true);
+  for (const name of ['index.html', 'admin.html', 'qr.html', 'app.js', 'admin.js', 'menu-store.js', 'menu-data.json', 'menu-defaults.js']) {
+    assert.equal(fs.existsSync(`_site/${name}`), true, `${name} should be published`);
+  }
+  assert.equal(fs.existsSync('_site/assets/items/latte.jpg'), true);
+  assert.equal(fs.existsSync('_site/tests'), false);
+  assert.equal(fs.existsSync('_site/.git'), false);
+  assert.equal(fs.existsSync('_site/package.json'), false);
+
   const index = fs.readFileSync('_site/index.html', 'utf8');
-  const gateway = fs.readFileSync('_site/admin.html', 'utf8');
-  assert.doesNotMatch(index, /href=["']admin\.html["']/);
+  assert.match(index, /id="admin-view"/);
+  assert.match(index, /id="admin-pin"/);
+  assert.match(index, /<script src="admin\.js" defer><\/script>/);
   assert.match(index, /Content-Security-Policy/);
-  assert.match(gateway, /github\.com\/RwinFu\/testmenu\/edit\/main\/menu-data\.json/);
-  assert.match(gateway, /Content-Security-Policy/);
-  assert.match(gateway, /noindex, nofollow/);
-  assert.doesNotMatch(gateway, /id="items-table"|src="admin\.js"/);
+  assert.doesNotMatch(index, /\sstyle=/);
+  assert.doesNotMatch(index, /\son(click|change|submit)=/);
+
+  const redirect = fs.readFileSync('_site/admin.html', 'utf8');
+  assert.match(redirect, /index\.html#admin/);
+  assert.match(redirect, /noindex, nofollow/);
 });
 
-test('local-only output includes the editor without exposing repository files', () => {
+test('local build mirrors the public build for npm start', () => {
   build('--local');
-  assert.equal(fs.existsSync('_local-site/admin.html'), true);
-  assert.equal(fs.existsSync('_local-site/admin.js'), true);
-  assert.equal(fs.existsSync('_local-site/.git'), false);
-  assert.equal(fs.existsSync('_local-site/package.json'), false);
+  for (const name of ['index.html', 'admin.html', 'admin.js', 'menu-store.js', 'style.css']) {
+    assert.equal(fs.existsSync(`_local-site/${name}`), true, `${name} should exist locally`);
+  }
   assert.equal(fs.existsSync('_local-site/tests'), false);
-  const editor = fs.readFileSync('_local-site/admin.html', 'utf8');
-  assert.match(editor, /id="items-table"/);
-  assert.match(editor, /Content-Security-Policy/);
+});
+
+test('generated defaults match the published menu', () => {
+  build('--site');
+  const generated = fs.readFileSync('_site/menu-defaults.js', 'utf8');
+  const raw = generated.slice(generated.indexOf('{'), generated.lastIndexOf(';'));
+  const data = JSON.parse(raw);
+  const source = JSON.parse(fs.readFileSync('menu-data.json', 'utf8'));
+  assert.deepEqual(data, source);
+});
+
+test('scripts are syntactically valid', () => {
+  for (const name of ['app.js', 'admin.js', 'menu-store.js']) {
+    assert.doesNotThrow(() => new Function(fs.readFileSync(name, 'utf8')), `${name} should parse`);
+  }
 });

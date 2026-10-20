@@ -1,17 +1,26 @@
 # Security policy
 
-## Published site and admin access
+## What this project is
 
-This project is published on GitHub Pages, which serves static files and does not provide server-side authentication. The production build replaces the graphical `admin.html` editor with a small gateway to GitHub's authenticated JSON editor and excludes `admin.js`; the public menu has no admin link. `npm start` creates a separate local preview at `_local-site/` for the owner to use the graphical editor. Do not host that local preview publicly.
+A static QR menu for GitHub Pages. The customer page, the table cart and the owner panel all run in the browser; there is no backend, database or account system.
 
-The local editor has no login and saves drafts in the browser. It must not be treated as an authenticated online admin panel. Never put passwords, access tokens, or other secrets in browser code or `localStorage`.
+## The admin PIN
 
-For production menu changes, use GitHub's authenticated repository editor for `menu-data.json` and submit a pull request where possible. Only GitHub accounts with repository write permissions can change the deployed data. An online WYSIWYG admin panel with user authentication requires a backend or hosting with access control; GitHub Pages alone cannot provide it.
+The panel at `/#admin` is protected by a local PIN (default `1234`, changeable in the panel). It is stored as an FNV hash in `localStorage`, login sessions live in `sessionStorage`, and five wrong attempts lock entry for 30 seconds.
 
-## Automated security checks
+**This is a convenience lock, not authentication.** Anyone who can open the page can read the JavaScript, clear their own browser storage or call the same client-side functions. Do not store confidential data in the panel, do not reuse a sensitive password, and do not treat the PIN as protection against a determined visitor. Real access control requires a server (or a hosted service) that verifies identity and stores data outside the browser.
 
-Pull requests run tests, build the public-only artifact, and audit npm dependencies. CodeQL scans JavaScript, and Dependabot checks npm packages and GitHub Actions weekly. The HTML includes a restrictive Content Security Policy and a no-referrer policy. GitHub Pages does not allow this repository to set arbitrary HTTP response headers; configure branch rules and deployment protection in repository settings for stronger enforcement.
+## Data handling
+
+- Menu edits, cart contents, orders and the PIN hash are stored in `localStorage` on the visitor's own device.
+- Orders placed by a customer stay on that customer's device until a shared backend is added. They never reach the cafe automatically.
+- No analytics, third-party scripts, cookies or external fonts are loaded.
+- Every render path escapes user-controlled strings; menu data is validated before it is stored or displayed, including an allow-list for image paths.
+
+## Automated checks
+
+Pull requests run unit tests, a production build check, `npm audit`, Playwright browser tests, and CodeQL. Dependabot updates npm packages and pinned GitHub Actions weekly. Pages are served with a restrictive Content Security Policy, `no-referrer`, and no inline script or style.
 
 ## Reporting a vulnerability
 
-Please report security issues privately to the repository owner through GitHub's private vulnerability reporting, if enabled, instead of opening a public issue.
+Please use GitHub's private vulnerability reporting for this repository instead of opening a public issue.

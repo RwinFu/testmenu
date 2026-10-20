@@ -2,16 +2,19 @@
 window.MENU_DEFAULTS = {
   "settings": {
     "name": "کافه رُست",
-    "eyebrow": "یک مکثِ خوش‌طعم",
-    "description": "قهوه‌ی خوب، خوراکی تازه و چند دقیقه آرامش برای خودت.",
+    "eyebrow": "قهوهٔ تازه، هر روز",
+    "description": "قهوهٔ دست‌ساز، صبحانهٔ گرم و دسر خانگی — سفارشت رو از میز بده، بقیه‌اش با ما.",
     "hours": "هر روز، ۸ صبح تا ۱۱ شب",
     "phone": "",
-    "instagram": ""
+    "instagram": "",
+    "notice": "",
+    "ordersOpen": true,
+    "whatsapp": ""
   },
   "categories": [
     {
       "id": "coffee",
-      "name": "قهوه گرم",
+      "name": "قهوهٔ گرم",
       "icon": "☕"
     },
     {
@@ -35,9 +38,9 @@ window.MENU_DEFAULTS = {
       "id": "espresso",
       "name": "اسپرسو دبل",
       "category": "coffee",
-      "description": "دانه‌ی ترکیبی خانه، عصاره‌گیری کوتاه و غلیظ",
+      "description": "دانهٔ ترکیبی خانه، عصاره‌گیری کوتاه و کرمای غلیظ",
       "price": 95000,
-      "image": "assets/hero-cafe.jpg",
+      "image": "assets/items/espresso.jpg",
       "popular": true,
       "available": true
     },
@@ -45,27 +48,37 @@ window.MENU_DEFAULTS = {
       "id": "americano",
       "name": "آمریکانو",
       "category": "coffee",
-      "description": "اسپرسو دبل با آب داغ؛ ساده و خوش‌عطر",
+      "description": "اسپرسو دبل و آب داغ؛ ساده، خوش‌عطر و بی‌دردسر",
       "price": 110000,
-      "image": "assets/hero-cafe.jpg",
+      "image": "assets/items/americano.jpg",
       "popular": false,
       "available": true
     },
     {
       "id": "latte",
-      "name": "لاته آرت",
+      "name": "کافه لاته",
       "category": "coffee",
-      "description": "اسپرسو و شیر بخارداده‌شده با طرح روز",
+      "description": "اسپرسو و شیر بخار‌داده با لاته‌آرت روز",
       "price": 145000,
-      "image": "assets/hero-cafe.jpg",
+      "image": "assets/items/latte.jpg",
       "popular": true,
+      "available": true
+    },
+    {
+      "id": "mocha",
+      "name": "موکا شکلاتی",
+      "category": "coffee",
+      "description": "اسپرسو، شکلات تلخ و شیر؛ گرم و دلچسب",
+      "price": 165000,
+      "image": "assets/items/mocha.jpg",
+      "popular": false,
       "available": true
     },
     {
       "id": "pistachio",
       "name": "آیس لاته پسته",
       "category": "cold",
-      "description": "شیر، اسپرسو و کرم پسته‌ی دست‌ساز",
+      "description": "شیر، اسپرسو و کرم پستهٔ دست‌ساز روی یخ",
       "price": 185000,
       "image": "assets/coffee.jpg",
       "popular": true,
@@ -75,9 +88,9 @@ window.MENU_DEFAULTS = {
       "id": "coldbrew",
       "name": "کلدبرو",
       "category": "cold",
-      "description": "قهوه‌ی دم‌سرد ۱۸ ساعته با طعمی نرم",
+      "description": "دم‌آوری سرد ۱۸ ساعته با طعمی نرم و شکلاتی",
       "price": 155000,
-      "image": "assets/coffee.jpg",
+      "image": "assets/items/coldbrew.jpg",
       "popular": false,
       "available": true
     },
@@ -85,9 +98,9 @@ window.MENU_DEFAULTS = {
       "id": "lemonade",
       "name": "لیموناد تازه",
       "category": "cold",
-      "description": "لیموترش تازه، نعناع و کمی شیرینی طبیعی",
+      "description": "لیموترش تازه، نعناع و شیرینی ملایم",
       "price": 135000,
-      "image": "assets/coffee.jpg",
+      "image": "assets/items/lemonade.jpg",
       "popular": false,
       "available": true
     },
@@ -95,7 +108,7 @@ window.MENU_DEFAULTS = {
       "id": "croissant",
       "name": "کروسان کره‌ای",
       "category": "brunch",
-      "description": "هر روز تازه، لایه‌لایه و طلایی",
+      "description": "هر روز تازه، لایه‌لایه و طلایی با کرهٔ فرانسوی",
       "price": 125000,
       "image": "assets/brunch.jpg",
       "popular": true,
@@ -107,7 +120,7 @@ window.MENU_DEFAULTS = {
       "category": "brunch",
       "description": "نان خمیرترش، آووکادو، تخم‌مرغ و سبزی تازه",
       "price": 265000,
-      "image": "assets/brunch.jpg",
+      "image": "assets/items/avocado.jpg",
       "popular": false,
       "available": true
     },
@@ -115,9 +128,19 @@ window.MENU_DEFAULTS = {
       "id": "pancake",
       "name": "پنکیک عسل و توت",
       "category": "brunch",
-      "description": "پنکیک نرم با عسل، کره و میوه‌ی فصل",
+      "description": "پنکیک نرم با عسل، کره و میوهٔ فصل",
       "price": 235000,
-      "image": "assets/brunch.jpg",
+      "image": "assets/items/pancake.jpg",
+      "popular": false,
+      "available": true
+    },
+    {
+      "id": "club",
+      "name": "کلاب ساندویچ",
+      "category": "brunch",
+      "description": "نان تست، مرغ گریل، سبزیجات تازه و سیب‌زمینی سرخ‌کرده",
+      "price": 245000,
+      "image": "assets/items/club.jpg",
       "popular": false,
       "available": true
     },
@@ -133,21 +156,21 @@ window.MENU_DEFAULTS = {
     },
     {
       "id": "cheesecake",
-      "name": "چیزکیک سن‌سباستین",
+      "name": "چیزکیک باسک",
       "category": "dessert",
-      "description": "برشته از بیرون، خامه‌ای در مرکز",
+      "description": "چیزکیک باسک؛ برشته از بیرون، خامه‌ای در مرکز",
       "price": 185000,
-      "image": "assets/dessert.jpg",
+      "image": "assets/items/cheesecake.jpg",
       "popular": false,
       "available": true
     },
     {
-      "id": "cookie",
-      "name": "کوکی شکلاتی",
+      "id": "brownie",
+      "name": "براونی شکلاتی",
       "category": "dessert",
-      "description": "کوکی گرم با تکه‌های شکلات تلخ",
+      "description": "گرم و نرم با تکه‌های شکلات تلخ",
       "price": 85000,
-      "image": "assets/dessert.jpg",
+      "image": "assets/items/brownie.jpg",
       "popular": false,
       "available": true
     }
