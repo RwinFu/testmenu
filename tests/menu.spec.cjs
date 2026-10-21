@@ -65,7 +65,8 @@ test('mobile quick search and dish details are usable with touch-sized controls'
   await expect(page.locator('#search-suggestions')).toContainText('دسته‌بندی‌ها');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.locator('#menu-search').fill('لاته');
-  await expect(page.locator('#search-results .menu-item')).toContainText('لاته');
+  await expect(page.locator('#search-results .menu-item')).toHaveCount(2);
+  await expect(page.locator('#search-results [data-open="latte"]')).toContainText('کافه لاته');
   await page.locator('#search-results [data-open="latte"]').click();
   await expect(page.locator('#item-sheet')).toBeVisible();
   await expect(page.locator('#search-panel')).toBeHidden();
