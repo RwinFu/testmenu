@@ -24,24 +24,30 @@ test('the admin short URL opens the pin screen and dishes list their ingredients
   await expect(page.locator('#item-sheet')).not.toContainText('افزودن');
 
   await page.goto('/');
+  await page.locator('#search-open-hero').click();
   await page.locator('#menu-search').fill('پسته');
-  await expect(page.locator('.menu-item')).toHaveCount(1);
-  await expect(page.locator('.menu-item')).toContainText('آیس لاته پسته');
+  await expect(page.locator('#search-results .menu-item')).toHaveCount(1);
+  await expect(page.locator('#search-results .menu-item')).toContainText('آیس لاته پسته');
+  await expect(page.locator('#search-panel')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#search-panel')).toBeHidden();
 });
 
 test('the menu is view-only and customers can browse, filter and search it', async ({ page }) => {
   const errors = [];
   page.on('pageerror', error => errors.push(error));
   await page.goto('/');
-  await expect(page.locator('.menu-item')).toHaveCount(data.items.length);
+  await expect(page.locator('#menu-grid .menu-item')).toHaveCount(data.items.length);
   await page.locator('.cat-chip', { hasText: 'قهوهٔ گرم' }).click();
-  await expect(page.locator('.menu-item')).toHaveCount(coffeeCount);
+  await expect(page.locator('#menu-grid .menu-item')).toHaveCount(coffeeCount);
+  await page.locator('#search-open').click();
   await page.locator('#menu-search').fill('آمري');
-  await expect(page.locator('.menu-item')).toHaveCount(1);
+  await expect(page.locator('#search-results .menu-item')).toHaveCount(1);
   await page.locator('#menu-search').fill('چیزی که نداریم');
-  await expect(page.locator('#empty-state')).toBeVisible();
-  await page.locator('#reset-search').click();
-  await expect(page.locator('.menu-item')).toHaveCount(data.items.length);
+  await expect(page.locator('#search-empty')).toBeVisible();
+  await page.locator('#search-empty-clear').click();
+  await expect(page.locator('#search-panel')).toBeHidden();
+  await expect(page.locator('#menu-grid .menu-item')).toHaveCount(data.items.length);
 
   // No cart, no add button and no visible link into the owner panel.
   await expect(page.locator('[data-add]')).toHaveCount(0);
@@ -49,6 +55,26 @@ test('the menu is view-only and customers can browse, filter and search it', asy
   await expect(page.locator('.site-foot').getByText('ورود مدیر')).toHaveCount(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   expect(errors).toEqual([]);
+});
+
+test('mobile quick search and dish details are usable with touch-sized controls', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 700 });
+  await page.goto('/');
+  await page.locator('#search-open').click();
+  await expect(page.locator('#menu-search')).toBeFocused();
+  await expect(page.locator('#search-suggestions')).toContainText('دسته‌بندی‌ها');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.locator('#menu-search').fill('لاته');
+  await expect(page.locator('#search-results .menu-item')).toContainText('لاته');
+  await page.locator('#search-results [data-open="latte"]').click();
+  await expect(page.locator('#item-sheet')).toBeVisible();
+  await expect(page.locator('#search-panel')).toBeHidden();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await expect(page.locator('#item-sheet')).toContainText('ترکیبات');
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#item-sheet')).toBeHidden();
+  await expect(page.locator('#search-open')).toBeFocused();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
 test('owner can hide a dish, change a price and add a new item', async ({ page }) => {
@@ -59,7 +85,7 @@ test('owner can hide a dish, change a price and add a new item', async ({ page }
   await expect(page.locator('#toast')).toContainText('ناموجود');
 
   await page.goto('/');
-  const espresso = page.locator('.menu-item').filter({ has: page.locator('[data-open="espresso"]') });
+  const espresso = page.locator('#menu-grid .menu-item').filter({ has: page.locator('[data-open="espresso"]') });
   await expect(espresso).toContainText('ناموجود');
 
   await page.goto('/#admin');
@@ -79,8 +105,8 @@ test('owner can hide a dish, change a price and add a new item', async ({ page }
   await expect(page.locator('#admin-menu-list')).toContainText('کیک تست');
 
   await page.goto('/');
-  await expect(page.locator('.menu-item')).toHaveCount(data.items.length + 1);
-  await expect(page.locator('.menu-item').filter({ has: page.locator('[data-open="latte"]') })).toContainText('۱۵۰٬۰۰۰');
+  await expect(page.locator('#menu-grid .menu-item')).toHaveCount(data.items.length + 1);
+  await expect(page.locator('#menu-grid .menu-item').filter({ has: page.locator('[data-open="latte"]') })).toContainText('۱۵۰٬۰۰۰');
 });
 
 test('owner can edit café details, add a category and change the PIN', async ({ page }) => {
@@ -133,7 +159,7 @@ test('works with blocked storage and failed JSON request', async ({ page }) => {
   await page.addInitScript(() => Object.defineProperty(window, 'localStorage', { get() { throw new Error('blocked'); } }));
   await page.route('**/menu-data.json', route => route.abort());
   await page.goto('/');
-  await expect(page.locator('.menu-item')).toHaveCount(data.items.length);
+  await expect(page.locator('#menu-grid .menu-item')).toHaveCount(data.items.length);
   await expect(page.locator('#notice-banner')).toBeVisible();
 });
 

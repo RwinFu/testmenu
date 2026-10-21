@@ -9,10 +9,14 @@ function build(mode) {
 
 test('public build ships the view-only menu and the pin-gated owner panel', () => {
   build('--site');
-  for (const name of ['index.html', 'admin.html', 'qr.html', 'app.js', 'admin.js', 'menu-store.js', 'menu-data.json', 'menu-defaults.js']) {
+  for (const name of ['index.html', 'admin.html', 'qr.html', 'manifest.webmanifest', 'app.js', 'admin.js', 'menu-store.js', 'menu-data.json', 'menu-defaults.js']) {
     assert.equal(fs.existsSync(`_site/${name}`), true, `${name} should be published`);
   }
   assert.equal(fs.existsSync('_site/assets/items/latte.jpg'), true);
+  assert.equal(fs.existsSync('_site/assets/icon.svg'), true);
+  const manifest = JSON.parse(fs.readFileSync('_site/manifest.webmanifest', 'utf8'));
+  assert.equal(manifest.display, 'standalone');
+  assert.equal(manifest.icons[0].src, 'assets/icon.svg');
   assert.equal(fs.existsSync('_site/admin/index.html'), true);
   const adminRedirect = fs.readFileSync('_site/admin/index.html', 'utf8');
   assert.match(adminRedirect, /#admin/);
@@ -41,7 +45,7 @@ test('public build ships the view-only menu and the pin-gated owner panel', () =
 
 test('local build mirrors the public build for npm start', () => {
   build('--local');
-  for (const name of ['index.html', 'admin.html', 'admin.js', 'menu-store.js', 'style.css']) {
+  for (const name of ['index.html', 'admin.html', 'admin.js', 'menu-store.js', 'style.css', 'manifest.webmanifest']) {
     assert.equal(fs.existsSync(`_local-site/${name}`), true, `${name} should exist locally`);
   }
   assert.equal(fs.existsSync('_local-site/tests'), false);

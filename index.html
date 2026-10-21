@@ -3,18 +3,26 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; connect-src 'self'; font-src 'self'; form-action 'self'; frame-src 'none'; img-src 'self' data: blob:; object-src 'none'; script-src 'self'; style-src 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; connect-src 'self'; font-src 'self'; form-action 'self'; frame-src 'none'; img-src 'self' data: blob:; manifest-src 'self'; object-src 'none'; script-src 'self'; style-src 'self'">
   <meta name="referrer" content="no-referrer">
   <meta name="theme-color" content="#f6f1e8">
+  <meta name="color-scheme" content="light">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="منوی کافه">
+  <meta name="format-detection" content="telephone=no">
   <meta name="description" content="منوی دیجیتال کافه رُست؛ قهوه، صبحانه و دسر. منو را ببین و سفارش را به ویتر بگو.">
   <title>کافه رُست | منوی کافه</title>
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <a class="skip-link" href="#menu-start">رفتن به منو</a>
 
   <div id="storefront">
-    <header class="site-head">
+    <header class="site-head" id="site-head">
       <div class="shell site-head-inner">
         <a class="brand" href="#menu-start" aria-label="کافه رُست">
           <span class="brand-mark" aria-hidden="true">
@@ -22,7 +30,12 @@
           </span>
           <span class="brand-name" data-setting="name">کافه رُست</span>
         </a>
-        <span class="head-hour" data-setting="hours">هر روز، ۸ صبح تا ۱۱ شب</span>
+        <div class="head-actions">
+          <span class="head-hour" data-setting="hours">هر روز، ۸ صبح تا ۱۱ شب</span>
+          <button class="head-btn" type="button" id="search-open" aria-label="جست‌وجو در منو" aria-controls="search-panel" aria-haspopup="dialog" aria-expanded="false">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>
+          </button>
+        </div>
       </div>
     </header>
 
@@ -31,17 +44,21 @@
         <p class="hero-eyebrow"><span class="hero-dot" aria-hidden="true"></span><span data-setting="eyebrow">قهوهٔ تازه، هر روز</span></p>
         <h1 id="cafe-name" class="hero-title" data-setting="name">کافه رُست</h1>
         <p class="hero-desc" data-setting="description">قهوهٔ دست‌ساز، صبحانهٔ گرم و دسر خانگی — منوی کافه.</p>
-        <p class="hero-meta">
-          <span>منوی دیجیتال</span>
-          <span class="hero-sep" aria-hidden="true">·</span>
-          <span>قیمت‌ها به تومان</span>
-        </p>
 
-        <div class="search-field">
-          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>
-          <input type="search" id="menu-search" placeholder="جست‌وجو در منو…" aria-label="جست‌وجو در منو" autocomplete="off">
-          <button class="search-clear" id="search-clear" type="button" aria-label="پاک کردن جست‌وجو" hidden>×</button>
-        </div>
+        <button class="search-trigger" type="button" id="search-open-hero" aria-controls="search-panel" aria-haspopup="dialog" aria-expanded="false">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>
+          <span class="search-trigger-text">دنبال چی می‌گردی؟</span>
+          <kbd class="search-kbd">جست‌وجو</kbd>
+        </button>
+
+        <p class="hero-meta">
+          <span class="meta-pill">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 1.8"/></svg>
+            <span data-setting="hours">هر روز، ۸ صبح تا ۱۱ شب</span>
+          </span>
+          <span class="meta-pill meta-pill-soft">منوی دیجیتال</span>
+          <span class="meta-pill meta-pill-soft">قیمت‌ها به تومان</span>
+        </p>
       </section>
 
       <div id="menu-start" class="menu-wrap">
@@ -52,10 +69,22 @@
         <div class="shell menu-body">
           <div id="notice-banner" class="notice" hidden></div>
 
-          <div class="menu-heading">
-            <h2>منو</h2>
+          <div class="menu-heading" id="menu-heading">
+            <div>
+              <h2 id="menu-title">منو</h2>
+              <p class="menu-sub" id="menu-sub">همهٔ آیتم‌های کافه</p>
+            </div>
             <span class="menu-count" id="menu-count"></span>
           </div>
+
+          <section class="popular" id="popular" aria-labelledby="popular-title" hidden>
+            <div class="row-head">
+              <h2 id="popular-title">پیشنهاد کافه</h2>
+              <span>محبوب‌های این روزها</span>
+            </div>
+            <div class="popular-scroll" id="popular-list"></div>
+          </section>
+
           <p class="sr-only" id="menu-status" aria-live="polite">در حال آماده کردن منو…</p>
 
           <div class="menu-list" id="menu-grid"></div>
@@ -63,7 +92,7 @@
           <div class="empty-state" id="empty-state" hidden>
             <span class="empty-emoji" aria-hidden="true">☕</span>
             <h3>چیزی پیدا نشد</h3>
-            <p>یک عبارت دیگر امتحان کن یا کل منو را ببین.</p>
+            <p>دستهٔ دیگری را امتحان کن یا کل منو را ببین.</p>
             <button class="btn btn-outline" id="reset-search" type="button">دیدن همهٔ منو</button>
           </div>
 
@@ -90,20 +119,49 @@
           </div>
         </div>
         <div class="foot-links" id="foot-links"></div>
-        <p class="foot-note">منوی دیجیتال · قیمت‌ها به تومان</p>
+        <p class="foot-note">
+          <span class="foot-dot" aria-hidden="true"></span>
+          برای سفارش، ویتر را صدا بزن
+        </p>
       </div>
     </footer>
   </div>
 
+  <button class="scroll-top" id="scroll-top" type="button" aria-label="رفتن به بالای منو" hidden>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V6M6 12l6-6 6 6"/></svg>
+  </button>
+
+  <section class="search-panel" id="search-panel" role="dialog" aria-modal="true" hidden aria-labelledby="search-panel-title">
+    <div class="search-head">
+      <h2 id="search-panel-title" class="sr-only">جست‌وجو در منو</h2>
+      <div class="search-bar">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>
+        <label class="sr-only" for="menu-search">جست‌وجو در منو</label>
+        <input type="search" id="menu-search" placeholder="اسم غذا یا ترکیباتش…" autocomplete="off" enterkeyhint="search" data-autofocus>
+        <button class="search-clear" id="search-clear" type="button" aria-label="پاک کردن جست‌وجو" hidden>×</button>
+      </div>
+      <button class="search-close" id="search-close" type="button">بستن</button>
+    </div>
+
+    <div class="search-body">
+      <p class="search-hint" id="search-hint">مثلاً «لاته»، «پسته» یا «دسر».</p>
+      <p class="sr-only" id="search-status" aria-live="polite"></p>
+      <div id="search-suggestions"></div>
+      <div id="search-results" class="menu-list"></div>
+      <div class="empty-state" id="search-empty" hidden>
+        <span class="empty-emoji" aria-hidden="true">☕</span>
+        <h3>چیزی پیدا نشد</h3>
+        <p>یک عبارت دیگر امتحان کن یا همهٔ منو را ببین.</p>
+        <button class="btn btn-outline" id="search-empty-clear" type="button">کل منو را ببین</button>
+      </div>
+    </div>
+  </section>
+
   <div class="scrim" id="scrim" hidden></div>
 
-  <section class="sheet" id="item-sheet" role="dialog" aria-modal="true" aria-labelledby="item-sheet-title" hidden>
-    <div class="sheet-grip" aria-hidden="true"></div>
-    <div class="sheet-head">
-      <h2 id="item-sheet-title">جزئیات</h2>
-      <button class="icon-btn" type="button" data-close aria-label="بستن">×</button>
-    </div>
-    <div class="sheet-body" id="item-sheet-body"></div>
+  <section class="sheet detail-sheet" id="item-sheet" role="dialog" aria-modal="true" aria-labelledby="item-sheet-title" hidden>
+    <div class="sheet-grip" aria-hidden="true"><span></span></div>
+    <div class="detail-scroll" id="item-sheet-body"></div>
   </section>
 
   <main id="admin-view" class="admin" aria-label="پنل مدیریت" hidden>
@@ -137,7 +195,7 @@
           <p class="form-error" id="login-error" role="alert" hidden></p>
           <button class="btn btn-dark btn-wide login-submit" type="submit">ورود به پنل</button>
         </form>
-        <p class="login-hint" id="login-hint">رمز پیش‌فرض: <bdi>1234</bdi> — بعد از ورود از بخش «کافه» عوضش کن.</p>
+        <p class="login-hint" id="login-hint">رمز پیش‌فرض: <bdi>1234</bdi> — بعد از ورود از بخش «اطلاعات کافه» عوضش کن.</p>
         <p class="login-note">این پنل روی همین مرورگر کار می‌کند؛ GitHub Pages سرور ندارد و رمز فقط یک قفل سادهٔ محلی است.</p>
         <a class="link-btn" href="#menu-start">← بازگشت به منو</a>
       </div>
@@ -254,7 +312,7 @@
   </main>
 
   <section class="sheet wide-sheet" id="item-editor" role="dialog" aria-modal="true" aria-labelledby="item-editor-title" hidden>
-    <div class="sheet-grip" aria-hidden="true"></div>
+    <div class="sheet-grip" aria-hidden="true"><span></span></div>
     <div class="sheet-head">
       <h2 id="item-editor-title">آیتم جدید</h2>
       <button class="icon-btn" type="button" data-close aria-label="بستن">×</button>

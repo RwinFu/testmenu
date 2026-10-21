@@ -1,0 +1,22 @@
+{
+  "id": "./",
+  "name": "منوی کافه رُست",
+  "short_name": "منوی کافه",
+  "description": "منوی دیجیتال کافه رُست",
+  "lang": "fa",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f6f1e8",
+  "theme_color": "#f6f1e8",
+  "icons": [
+    {
+      "src": "assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
