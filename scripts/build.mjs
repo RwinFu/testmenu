@@ -8,7 +8,7 @@ context.window.MenuStore.validate(data);
 writeFileSync('menu-defaults.js', '// Generated from menu-data.json by node scripts/build.mjs. Do not edit.\nwindow.MENU_DEFAULTS = ' + JSON.stringify(data, null, 2) + ';\n');
 
 const files = [
-  'index.html', 'admin.html', 'qr.html', 'qr.js', 'qr-menu.svg', 'style.css',
+  'index.html', 'admin.html', 'qr.html', 'qr.js', 'qr-menu.svg', 'style.css', 'manifest.webmanifest',
   'app.js', 'admin.js', 'menu-store.js', 'menu-defaults.js', 'menu-data.json'
 ];
 

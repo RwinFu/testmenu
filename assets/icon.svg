@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="منوی کافه رُست">
+  <rect width="512" height="512" rx="112" fill="#f6f1e8"/>
+  <circle cx="256" cy="256" r="176" fill="#241f19"/>
+  <g fill="none" stroke="#f6f1e8" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M160 210h150v78a66 66 0 0 1-66 66h-18a66 66 0 0 1-66-66v-78Z"/>
+    <path d="M310 226h26a34 34 0 0 1 0 68h-26"/>
+    <path d="M200 170c0-14 14-14 14-30M250 170c0-14 14-14 14-30"/>
+  </g>
+</svg>

@@ -1,5 +1,6 @@
 const { defineConfig } = require('@playwright/test');
 module.exports = defineConfig({
+  reporter:process.env.GITHUB_ACTIONS ? 'github' : 'list',
   testDir:'./tests',
   testMatch:'**/*.spec.cjs',
   use:{
